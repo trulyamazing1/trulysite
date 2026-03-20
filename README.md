@@ -4,7 +4,7 @@
 
 🐲 Meet a dragon in the Binary Garden
 
-A small interactive system exploring growth, motion, and meaning.
+*A system where motion reveals meaning.*
 
 🌱 What this is
 
