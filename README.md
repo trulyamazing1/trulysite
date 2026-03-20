@@ -1,7 +1,8 @@
 # 🐉 Binary Garden
 
 [🌿 Enter the Garden](./binary_garden.html)
-🐉 Binary Garden
+
+🐉 Meet A Dragon in the Binary Garden
 
 A small interactive system exploring growth, motion, and meaning.
 
