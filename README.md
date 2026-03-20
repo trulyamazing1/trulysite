@@ -8,7 +8,7 @@
   <img src="DragonGuard.gif" width="300">
 </p>
 
-The dragon protects his hoard!
+ The dragon protects his hoard! 
 
 *A system where motion reveals meaning.*
 
