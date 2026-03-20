@@ -2,139 +2,180 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Enter the Garden</title>
-
   <style>
-    body {
-      margin: 0;
-      background: #020617;
-      color: #e2e8f0;
-      font-family: system-ui, sans-serif;
-      line-height: 1.6;
-      padding: 40px;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
+    :root {
+      --bg: #020617;
+      --panel: #0f172a;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --line: #1e293b;
+      --green: #22c55e;
+      --green-dark: #16a34a;
     }
 
-    h1, h2 {
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 56px 24px 72px;
+    }
+
+    .hero {
       text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .hero img {
+      display: block;
+      margin: 0 auto 18px;
+      max-width: 240px;
+      width: 100%;
+      height: auto;
     }
 
     h1 {
-      margin-bottom: 10px;
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 700;
     }
 
-    .center {
-      text-align: center;
-      margin: 20px 0;
+    .tagline {
+      margin: 0;
+      color: var(--muted);
+      font-style: italic;
     }
 
-    img {
-      display: block;
-      margin: 0 auto 20px;
+    .panel {
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 28px 24px;
+      margin: 18px 0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
     }
 
-    hr {
-      border: none;
-      border-top: 1px solid #1e293b;
-      margin: 30px 0;
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.15rem;
+      text-transform: lowercase;
+      letter-spacing: 0.02em;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    p:last-child,
+    ul:last-child,
+    blockquote:last-child {
+      margin-bottom: 0;
     }
 
     ul {
+      margin: 0;
       padding-left: 20px;
+    }
+
+    li + li {
+      margin-top: 8px;
+    }
+
+    blockquote {
+      margin: 0;
+      padding-left: 14px;
+      border-left: 3px solid var(--green);
+      color: #d8fbe3;
+      font-style: italic;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 28px;
     }
 
     .back {
       display: inline-block;
-      margin-top: 40px;
+      margin-top: 10px;
+      background: var(--green);
+      color: #022c22;
       text-decoration: none;
-      color: #22c55e;
+      padding: 11px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      transition: background 0.2s ease, transform 0.2s ease;
     }
 
     .back:hover {
-      text-decoration: underline;
+      background: var(--green-dark);
+      transform: translateY(-1px);
+    }
+
+    .tiny-dragon {
+      margin-top: 18px;
+      color: var(--muted);
     }
   </style>
 </head>
-
 <body>
+  <main class="wrap">
+    <section class="hero">
+      <img src="DragonGuard.gif" alt="Dragon guardian" />
+      <h1>🐉 Binary Garden</h1>
+      <p class="tagline">a system where motion reveals meaning</p>
+    </section>
 
-  <h1>🐉 Binary Garden</h1>
+    <section class="panel">
+      <h2>what this is</h2>
+      <p>Binary Garden is a small interactive system.</p>
+      <p>It looks simple. It is not trying to overwhelm you.</p>
+      <p>It explores:</p>
+      <ul>
+        <li>movement as learning</li>
+        <li>systems that respond instead of instructing</li>
+        <li>how meaning accumulates through interaction</li>
+      </ul>
+    </section>
 
-  <div class="center">
-    <img src="DragonGuard.gif" width="260">
-    <p><em>a system where motion reveals meaning</em></p>
-  </div>
+    <section class="panel">
+      <h2>core idea</h2>
+      <blockquote>what you carry forward matters.</blockquote>
+      <p>This is not a game about winning.</p>
+      <p>It is a space for observing, interacting, and noticing what changes.</p>
+    </section>
 
-  <hr>
+    <section class="panel">
+      <h2>dragon ring</h2>
+      <p>Binary Garden is part of a larger system.</p>
+      <p>A learning environment where:</p>
+      <ul>
+        <li>motion reveals structure</li>
+        <li>feedback replaces instruction</li>
+        <li>understanding emerges through interaction</li>
+      </ul>
+    </section>
 
-  <h2>what this is</h2>
+    <section class="panel">
+      <h2>notes</h2>
+      <p>This project is evolving.</p>
+      <p>Some systems are visible. Some are not yet revealed.</p>
+    </section>
 
-  <p>a small interactive system.</p>
-
-  <p>it looks simple.</p>
-
-  <p>but it explores:</p>
-
-  <ul>
-    <li>movement as learning</li>
-    <li>systems that respond instead of instructing</li>
-    <li>how meaning accumulates through interaction</li>
-  </ul>
-
-  <hr>
-
-  <h2>core idea</h2>
-
-  <p><strong>what you carry forward matters.</strong></p>
-
-  <p>this is not a game about winning.</p>
-
-  <p>it is a space for:</p>
-
-  <ul>
-    <li>observing</li>
-    <li>interacting</li>
-    <li>noticing what changes</li>
-  </ul>
-
-  <hr>
-
-  <h2>dragon ring</h2>
-
-  <p>binary garden is part of a larger system.</p>
-
-  <p>a learning environment where:</p>
-
-  <ul>
-    <li>motion reveals structure</li>
-    <li>feedback replaces instruction</li>
-    <li>understanding emerges through interaction</li>
-  </ul>
-
-  <hr>
-
-  <h2>notes</h2>
-
-  <p>this project is evolving.</p>
-
-  <p>some systems are visible.<br>
-  some are not yet revealed.</p>
-
-  <div class="center">
-    🐉
-  </div>
-
-  <p class="center">
-    <em>the dragon does not tell you what to do.<br>
-    it shows you what changed.</em>
-  </p>
-
-  <div class="center">
-    <a class="back" href="index.html">← return</a>
-  </div>
-
+    <div class="footer">
+      <blockquote>The dragon does not tell you what to do. It shows you what changed.</blockquote>
+      <a class="back" href="index.html">← return</a>
+      <div class="tiny-dragon">🐉</div>
+    </div>
+  </main>
 </body>
 </html>
