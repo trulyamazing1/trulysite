@@ -4,10 +4,11 @@
 
 🐲 Meet a dragon in the Binary Garden
 
-<p align="center">
+<p align="left center">
   <img src="DragonGuard.gif" width="300">
 </p>
 
+The dragon protects his hoard!
 *A system where motion reveals meaning.*
 
 🌱 What this is
