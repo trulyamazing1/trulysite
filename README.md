@@ -1,4 +1,6 @@
-[binary_garden.html](https://github.com/user-attachments/files/26136197/binary_garden.html)
+# 🐉 Binary Garden
+
+[🌿 Enter the Garden](./binary_garden.html)
 🐉 Binary Garden
 
 A small interactive system exploring growth, motion, and meaning.
