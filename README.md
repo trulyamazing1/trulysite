@@ -2,7 +2,7 @@
 
 [🌿 Enter the Garden](./binary_garden.html)
 
-🐉 Meet A Dragon in the Binary Garden
+🐲 Meet a dragon in the Binary Garden
 
 A small interactive system exploring growth, motion, and meaning.
 
@@ -14,11 +14,9 @@ It looks simple.
 
 But underneath, it explores:
 
-movement as learning
-
-systems that respond instead of instruct
-
-how meaning accumulates through interaction
+- movement as learning  
+- systems that respond instead of instructing  
+- how meaning accumulates through interaction  
 
 🧠 Core idea
 
@@ -28,12 +26,10 @@ This is not a game about winning.
 
 It is a space for:
 
-observing
-
-interacting
-
-noticing what changes
-
+- observing  
+- interacting  
+- noticing what changes
+  
 🐉 Related System: Dragon Ring
 
 Binary Garden is part of a larger system called Dragon Ring.
