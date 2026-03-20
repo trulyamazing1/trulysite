@@ -5,7 +5,7 @@
 🐲 Meet a dragon in the Binary Garden
 
 <p align="center">
-  <img src="dragon.gif" width="300">
+  <img src="DragonGuard.gif" width="300">
 </p>
 
 *A system where motion reveals meaning.*
