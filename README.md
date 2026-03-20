@@ -1,6 +1,6 @@
 # 🐉 Binary Garden
 
-[🌿 Enter the Garden](./binary_garden.html)
+[🌿 Enter the Garden](./index.html)
 
 🐲 Meet a dragon in the Binary Garden
 
