@@ -442,11 +442,9 @@ function dragonRespond(context) {
     : `<span class="small">No messages have been released into the field yet.</span>`;
 
   journalLog.innerHTML = player.journal.length
-    ? `<ul class="clean">${player.journal.map(j => `<li>${escapeHtml(j)}</li>`).join("")}</ul>`
+    ? `<ul class="clean">${player.journal.map(j => `<li>${escapeHt
+  ml(j)}</li>`).join("")}</ul>`
     : `<span class="small">No reflections yet.</span>`;
-
-  const scale = 1 + Math.min(player.growth_state * 0.04, 0.24);
-  core.style.transform = `scale(${scale})`;
 
   core.style.boxShadow = player.loop_sync_state
     ? "0 0 42px rgba(34, 197, 94, 0.65)"
