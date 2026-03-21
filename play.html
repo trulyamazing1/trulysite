@@ -226,8 +226,18 @@
       padding-left: 18px;
     }
 
+    .top-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
     @media (max-width: 850px) {
       .grid {
+        grid-template-columns: 1fr;
+      }
+      .top-actions {
         grid-template-columns: 1fr;
       }
     }
@@ -277,6 +287,12 @@
           <button onclick="prune()">Prune / Reflect</button>
         </div>
 
+        <div class="top-actions">
+          <button onclick="saveToJournal()">📓 Save Action</button>
+          <button onclick="useSelectedToken()">Use Token</button>
+          <button class="alt" onclick="resetGarden()">Reset Garden</button>
+        </div>
+
         <div class="dragon-box" id="dragonBox">
           The dragon watches the field.
         </div>
@@ -294,11 +310,6 @@
             <option value="ReflectionToken">ReflectionToken</option>
           </select>
           <input id="contentInput" placeholder="write a message or reflection..." />
-        </div>
-
-        <div class="actions">
-          <button onclick="useSelectedToken()">Use Token</button>
-          <button class="alt" onclick="resetGarden()">Reset Garden</button>
         </div>
 
         <p class="small">
@@ -323,334 +334,7 @@
       constructor(type, expires = false) {
         this.type = type;
         this.expires = expires;
-      <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Binary Garden — Play</title>
-  <style>
-    :root {
-      --bg: #020617;
-      --panel: #0f172a;
-      --line: #1e293b;
-      --text: #e2e8f0;
-      --muted: #94a3b8;
-      --green: #22c55e;
-      --green-dark: #16a34a;
-      --gold: #facc15;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: system-ui, sans-serif;
-      line-height: 1.5;
-    }
-
-    .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 28px 18px 40px;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(1.8rem, 3vw, 2.4rem);
-    }
-
-    .nav a {
-      color: var(--green);
-      text-decoration: none;
-      font-weight: 700;
-      margin-left: 14px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 18px;
-    }
-
-    .panel {
-      background: rgba(15, 23, 42, 0.92);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-
-    .panel h2 {
-      margin: 0 0 12px;
-      font-size: 1rem;
-      text-transform: lowercase;
-      letter-spacing: 0.02em;
-    }
-
-    .garden-visual {
-      min-height: 260px;
-      display: grid;
-      place-items: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .core {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, #fde68a, var(--gold));
-      box-shadow: 0 0 24px rgba(250, 204, 21, 0.55);
-      animation: breathe 5s ease-in-out infinite;
-      transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-    }
-
-    .halo {
-      position: absolute;
-      width: 190px;
-      height: 190px;
-      border-radius: 50%;
-      border: 2px solid rgba(34, 197, 94, 0.22);
-      transition: opacity 0.3s ease, filter 0.3s ease;
-    }
-
-    @keyframes breathe {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.12); }
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .stat {
-      background: rgba(2, 6, 23, 0.5);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 10px 12px;
-    }
-
-    .label {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .value {
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
-
-    .actions {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    button {
-      appearance: none;
-      border: 0;
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-weight: 700;
-      cursor: pointer;
-      background: var(--green);
-      color: #052e16;
-      transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    button:hover {
-      background: var(--green-dark);
-      box-shadow: 0 0 18px rgba(34, 197, 94, 0.25);
-      transform: translateY(-1px);
-    }
-
-    button.alt {
-      background: transparent;
-      color: var(--green);
-      border: 1px solid var(--green);
-    }
-
-    button.alt:hover {
-      background: rgba(34,197,94,0.08);
-    }
-
-    .inventory-list,
-    .log,
-    .journal {
-      background: rgba(2, 6, 23, 0.5);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px;
-      min-height: 120px;
-    }
-
-    .pill {
-      display: inline-block;
-      background: rgba(34, 197, 94, 0.12);
-      color: #bbf7d0;
-      border: 1px solid rgba(34, 197, 94, 0.25);
-      border-radius: 999px;
-      padding: 6px 10px;
-      margin: 0 8px 8px 0;
-      font-size: 0.9rem;
-    }
-
-    .dragon-box {
-      background: linear-gradient(180deg, rgba(34,197,94,0.08), rgba(2,6,23,0.25));
-      border: 1px solid rgba(34,197,94,0.2);
-      border-radius: 14px;
-      padding: 14px;
-      margin-top: 14px;
-      color: #d1fae5;
-      min-height: 78px;
-    }
-
-    .input-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-
-    input, select {
-      background: rgba(2, 6, 23, 0.65);
-      color: var(--text);
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 10px 12px;
-      font: inherit;
-    }
-
-    input {
-      flex: 1 1 220px;
-    }
-
-    .small {
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    ul.clean {
-      margin: 0;
-      padding-left: 18px;
-    }
-
-    @media (max-width: 850px) {
-      .grid {
-        grid-template-columns: 1fr;
       }
-    }
-  </style>
-</head>
-<body>
-  <main class="wrap">
-    <div class="topbar">
-      <h1>🐉 Binary Garden</h1>
-      <div class="nav">
-        <a href="garden.html">← Garden</a>
-        <a href="index.html">Home</a>
-      </div>
-    </div>
-
-    <div class="grid">
-      <section class="panel">
-        <h2>garden state</h2>
-        <div class="garden-visual">
-          <div class="halo" id="halo"></div>
-          <div class="core" id="core"></div>
-        </div>
-
-        <div class="stats">
-          <div class="stat">
-            <div class="label">growth state</div>
-            <div class="value" id="growthValue">0</div>
-          </div>
-          <div class="stat">
-            <div class="label">loop sync</div>
-            <div class="value" id="syncValue">false</div>
-          </div>
-          <div class="stat">
-            <div class="label">tokens in hoard</div>
-            <div class="value" id="inventoryCount">0</div>
-          </div>
-          <div class="stat">
-            <div class="label">journal entries</div>
-            <div class="value" id="journalCount">0</div>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button onclick="grow()">Grow</button>
-          <button onclick="waterOther()">Water Other</button>
-          <button onclick="spiralSync()">Spiral Sync</button>
-          <button onclick="prune()">Prune / Reflect</button>
-        </div>
-
-        <div class="dragon-box" id="dragonBox">
-          The dragon watches the field.
-        </div>
-      </section>
-
-      <section class="panel">
-        <h2>your hoard</h2>
-        <div class="inventory-list" id="inventoryList"></div>
-
-        <div class="input-row">
-          <select id="tokenSelect">
-            <option value="ChatSeed">ChatSeed</option>
-            <option value="EchoBubble">EchoBubble</option>
-            <option value="DialogueBloom">DialogueBloom</option>
-            <option value="ReflectionToken">ReflectionToken</option>
-          </select>
-          <input id="contentInput" placeholder="write a message or reflection..." />
-        </div>
-
-        <div class="actions">
-          <button onclick="useSelectedToken()">Use Token</button>
-          <button class="alt" onclick="resetGarden()">Reset Garden</button>
-        </div>
-
-        <p class="small">
-          DialogueBloom only mints when spiral sync is active. ReflectionToken writes to the journal instead of the public message log.
-        </p>
-      </section>
-
-      <section class="panel">
-        <h2>message log</h2>
-        <div class="log" id="messageLog"></div>
-      </section>
-
-      <section class="panel">
-        <h2>journal</h2>
-        <div class="journal" id="journalLog"></div>
-      </section>
-    </div>
-  </main>
-
-  <script>
-    class Token {
-  constructor(type, expires = false) {
-    this.type = type;
-    this.expires = expires;
-  }
-}
-      
     }
 
     class Player {
@@ -701,6 +385,8 @@
     }
 
     const player = new Player("truly");
+    let lastAction = "None";
+    let lastDragonMessage = "The dragon watches the field.";
 
     const growthValue = document.getElementById("growthValue");
     const syncValue = document.getElementById("syncValue");
@@ -714,140 +400,155 @@
     const contentInput = document.getElementById("contentInput");
     const core = document.getElementById("core");
     const halo = document.getElementById("halo");
-function dragonRespond(context) {
-  const g = player.growth_state;
-  const sync = player.loop_sync_state;
-  const tokens = player.inventory.length;
-
-  // 🌱 Early stage
-  if (g < 2) {
-    return "The field is quiet. Small motions still matter.";
-  }
-
-  // 🌿 Growing
-  if (g >= 2 && g < 4) {
-    if (context === "grow") {
-      return "Something is taking root.";
-    }
-    if (context === "water") {
-      return "You stabilize more than yourself.";
-    }
-  }
-
-  // 🌀 Sync unlocked
-  if (g >= 4 && !sync) {
-    return "The rings are close to aligning.";
-  }
-
-  // ✨ In sync
-  if (sync) {
-    if (tokens > 3) {
-      return "Your hoard is heavy. Choose what to release.";
-    }
-    return "The field hums. You are not alone in it.";
-  }
-
-  // 🐉 Default fallback
-  return "The dragon watches.";
-}
-    function dragonSay(msg) {
-      dragonBox.textContent = msg;
-    }
-
-    function updateVisuals() {
-  growthValue.textContent = player.growth_state;
-  syncValue.textContent = String(player.loop_sync_state);
-  inventoryCount.textContent = player.inventory.length;
-  journalCount.textContent = player.journal.length;
-
-  inventoryList.innerHTML = player.inventory.length
-    ? player.inventory.map(t => `<span class="pill">${t.type}${t.expires ? " ✧" : ""}</span>`).join("")
-    : `<span class="small">The hoard is quiet.</span>`;
-
-  messageLog.innerHTML = player.message_log.length
-    ? `<ul class="clean">${player.message_log.map(m => `<li>${escapeHtml(m)}</li>`).join("")}</ul>`
-    : `<span class="small">No messages have been released into the field yet.</span>`;
-
-journalLog.innerHTML = player.journal.length
-  ? `<ul class="clean">${player.journal.map(j => `<li>${escapeHtml(j)}</li>`).join("")}</ul>`
-  : `<span class="small">No reflections yet.</span>`;
-
-  core.style.boxShadow = player.loop_sync_state
-    ? "0 0 42px rgba(34, 197, 94, 0.65)"
-    : "0 0 24px rgba(250, 204, 21, 0.55)";
-
-  core.style.filter = player.loop_sync_state
-    ? "hue-rotate(40deg) saturate(1.2)"
-    : "none";
-
-  halo.style.opacity = player.loop_sync_state ? "1" : "0.45";
-  halo.style.filter = player.loop_sync_state ? "brightness(1.4)" : "brightness(1)";
-
-    }
 
     function escapeHtml(str) {
-      return str
+      return String(str)
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;");
     }
 
+    function dragonSay(msg) {
+      lastDragonMessage = msg;
+      dragonBox.textContent = msg;
+    }
+
+    function dragonRespond(context) {
+      const g = player.growth_state;
+      const sync = player.loop_sync_state;
+      const tokens = player.inventory.length;
+
+      if (context === "sync" && !sync && g < 4) {
+        return "The rings are not ready. Grow further before spiral sync can hold.";
+      }
+
+      if (sync) {
+        if (context === "sync") {
+          return "The rings align. Relational actions will carry farther now.";
+        }
+        if (context === "water") {
+          return "The field is aligned. Care carries farther.";
+        }
+        if (tokens > 3) {
+          return "Your hoard is heavy. Choose what to release.";
+        }
+        return "The field hums. You are not alone in it.";
+      }
+
+      if (g < 2) {
+        return "The field is quiet. Small motions still matter.";
+      }
+
+      if (g >= 2 && g < 4) {
+        if (context === "grow") return "Something is taking root.";
+        if (context === "water") return "You stabilize more than yourself.";
+        if (context === "prune") return "Reflection is a valid move.";
+      }
+
+      if (g >= 4 && !sync) {
+        return "The rings are close to aligning.";
+      }
+
+      return "The dragon watches.";
+    }
+
+    function updateVisuals() {
+      growthValue.textContent = player.growth_state;
+      syncValue.textContent = String(player.loop_sync_state);
+      inventoryCount.textContent = player.inventory.length;
+      journalCount.textContent = player.journal.length;
+
+      inventoryList.innerHTML = player.inventory.length
+        ? player.inventory.map(t => `<span class="pill">${t.type}${t.expires ? " ✧" : ""}</span>`).join("")
+        : `<span class="small">The hoard is quiet.</span>`;
+
+      messageLog.innerHTML = player.message_log.length
+        ? `<ul class="clean">${player.message_log.map(m => `<li>${escapeHtml(m)}</li>`).join("")}</ul>`
+        : `<span class="small">No messages have been released into the field yet.</span>`;
+
+      journalLog.innerHTML = player.journal.length
+        ? `<ul class="clean">${player.journal.map(j => {
+            if (typeof j === "string") {
+              return `<li>${escapeHtml(j)}</li>`;
+            }
+            return `<li>
+              <strong>${escapeHtml(j.action)}</strong> • g:${j.growth} • sync:${j.sync} • tokens:${j.tokens}<br>
+              🐉 ${escapeHtml(j.dragon)}<br>
+              <span class="small">${escapeHtml(j.time)}</span>
+            </li>`;
+          }).join("")}</ul>`
+        : `<span class="small">No reflections yet.</span>`;
+
+      const scale = 1 + Math.min(player.growth_state * 0.04, 0.24);
+      core.style.transform = `scale(${scale})`;
+
+      core.style.boxShadow = player.loop_sync_state
+        ? "0 0 42px rgba(34, 197, 94, 0.65)"
+        : "0 0 24px rgba(250, 204, 21, 0.55)";
+
+      core.style.filter = player.loop_sync_state
+        ? "hue-rotate(40deg) saturate(1.2)"
+        : "none";
+
+      core.style.animationDuration = player.loop_sync_state ? "3s" : "5s";
+
+      halo.style.opacity = player.loop_sync_state ? "1" : "0.45";
+      halo.style.filter = player.loop_sync_state ? "brightness(1.4)" : "brightness(1)";
+    }
+
     function grow() {
+      lastAction = "Grow";
       player.growth_state += 1;
 
-      let msg = `Growth rises to ${player.growth_state}.`;
       if (player.growth_state >= 3) {
-        msg += " " + player.earnToken("growth_3");
-      }
-      if (player.growth_state >= 4) {
-        player.loop_sync_state = true;
-        msg += " Spiral sync becomes possible.";
+        player.earnToken("growth_3");
       }
 
-      dragonSay(msg);
+      dragonSay(dragonRespond("grow"));
       updateVisuals();
     }
 
     function waterOther() {
-  const msg = player.earnToken("watered_other");
+      lastAction = "Water Other";
+      player.earnToken("watered_other");
 
-  if (player.loop_sync_state) {
-    player.inventory.push(new Token("EchoBubble"));
-    dragonSay("The field is aligned. Care carries farther.");
-  } else {
-    dragonSay(msg);
-  }
+      if (player.loop_sync_state) {
+        player.inventory.push(new Token("EchoBubble"));
+      }
 
-  updateVisuals();
-}
+      dragonSay(dragonRespond("water"));
+      updateVisuals();
     }
 
     function spiralSync() {
+      lastAction = "Spiral Sync";
+
       if (player.growth_state < 4) {
-        dragonSay("The rings are not ready. Grow further before spiral sync can hold.");
+        dragonSay(dragonRespond("sync"));
+        updateVisuals();
         return;
       }
 
       player.loop_sync_state = !player.loop_sync_state;
-      let msg = player.loop_sync_state
-        ? "The loop settles into resonance."
-        : "The loop quiets and loosens.";
 
       if (player.loop_sync_state) {
-        msg += " " + player.earnToken("spiral_sync");
+        player.earnToken("spiral_sync");
       }
 
-      dragonSay(msg);
+      dragonSay(dragonRespond("sync"));
       updateVisuals();
     }
 
     function prune() {
-      const msg = player.earnToken("pruned");
-      dragonSay(msg + " Reflection is a valid move.");
+      lastAction = "Prune / Reflect";
+      player.earnToken("pruned");
+      dragonSay(dragonRespond("prune"));
       updateVisuals();
     }
 
     function useSelectedToken() {
+      lastAction = "Use Token";
+
       const tokenType = tokenSelect.value;
       const content = contentInput.value.trim();
 
@@ -872,242 +573,23 @@ journalLog.innerHTML = player.journal.length
       updateVisuals();
     }
 
-    function resetGarden() {
-      player.growth_state = 0;
-      player.loop_sync_state = false;
-      player.inventory = [];
-      player.message_log = [];
-      player.journal = [];
-      dragonSay("The garden returns to stillness.");
-      updateVisuals();
-    }
+    function saveToJournal() {
+      const entry = {
+        action: lastAction,
+        growth: player.growth_state,
+        sync: player.loop_sync_state,
+        tokens: player.inventory.length,
+        dragon: lastDragonMessage,
+        time: new Date().toLocaleTimeString()
+      };
 
-    updateVisuals();
-  </script>
-</body>
-</html>
-    }
-
-    class Player {
-      constructor(id, gardenId = "binary-garden") {
-        this.id = id;
-        this.garden_id = gardenId;
-        this.growth_state = 0;
-        this.loop_sync_state = false;
-        this.inventory = [];
-        this.message_log = [];
-        this.journal = [];
-      }
-
-      earnToken(action) {
-        if (action === "growth_3" && this.growth_state >= 3) {
-          this.inventory.push(new Token("ChatSeed"));
-          return "A ChatSeed forms in your hoard.";
-        } else if (action === "watered_other") {
-          this.inventory.push(new Token("EchoBubble"));
-          return "An EchoBubble rises from the field.";
-        } else if (action === "spiral_sync" && this.loop_sync_state) {
-          this.inventory.push(new Token("DialogueBloom", true));
-          return "A DialogueBloom opens for a brief moment.";
-        } else if (action === "pruned") {
-          this.inventory.push(new Token("ReflectionToken"));
-          return "A ReflectionToken settles into your keeping.";
-        }
-        return "The field shifts, but nothing new is minted.";
-      }
-
-      useToken(tokenType, content) {
-        const tokenIndex = this.inventory.findIndex(t => t.type === tokenType);
-        if (tokenIndex === -1) return false;
-
-        if (tokenType === "ChatSeed") {
-          this.message_log.push(content);
-        } else if (tokenType === "EchoBubble") {
-          this.message_log.push(`🫧 ${content}`);
-        } else if (tokenType === "DialogueBloom") {
-          this.message_log.push(`🗯️ ${content}`);
-        } else if (tokenType === "ReflectionToken") {
-          this.journal.push(content);
-        }
-
-        this.inventory.splice(tokenIndex, 1);
-        return true;
-      }
-    }
-
-    const player = new Player("truly");
-
-    const growthValue = document.getElementById("growthValue");
-    const syncValue = document.getElementById("syncValue");
-    const inventoryCount = document.getElementById("inventoryCount");
-    const journalCount = document.getElementById("journalCount");
-    const inventoryList = document.getElementById("inventoryList");
-    const messageLog = document.getElementById("messageLog");
-    const journalLog = document.getElementById("journalLog");
-    const dragonBox = document.getElementById("dragonBox");
-    const tokenSelect = document.getElementById("tokenSelect");
-    const contentInput = document.getElementById("contentInput");
-    const core = document.getElementById("core");
-    const halo = document.getElementById("halo");
-function dragonRespond(context) {
-  const g = player.growth_state;
-  const sync = player.loop_sync_state;
-  const tokens = player.inventory.length;
-
-  // 🌱 Early stage
-  if (g < 2) {
-    return "The field is quiet. Small motions still matter.";
-  }
-
-  // 🌿 Growing
-  if (g >= 2 && g < 4) {
-    if (context === "grow") {
-      return "Something is taking root.";
-    }
-    if (context === "water") {
-      return "You stabilize more than yourself.";
-    }
-  }
-
-  // 🌀 Sync unlocked
-  if (g >= 4 && !sync) {
-    return "The rings are close to aligning.";
-  }
-
-  // ✨ In sync
-  if (sync) {
-    if (tokens > 3) {
-      return "Your hoard is heavy. Choose what to release.";
-    }
-    return "The field hums. You are not alone in it.";
-  }
-
-  // 🐉 Default fallback
-  return "The dragon watches.";
-}
-    function dragonSay(msg) {
-      dragonBox.textContent = msg;
-    }
-
-    function updateVisuals() {
-  growthValue.textContent = player.growth_state;
-  syncValue.textContent = String(player.loop_sync_state);
-  inventoryCount.textContent = player.inventory.length;
-  journalCount.textContent = player.journal.length;
-
-  inventoryList.innerHTML = player.inventory.length
-    ? player.inventory.map(t => `<span class="pill">${t.type}${t.expires ? " ✧" : ""}</span>`).join("")
-    : `<span class="small">The hoard is quiet.</span>`;
-
-  messageLog.innerHTML = player.message_log.length
-    ? `<ul class="clean">${player.message_log.map(m => `<li>${escapeHtml(m)}</li>`).join("")}</ul>`
-    : `<span class="small">No messages have been released into the field yet.</span>`;
-
-journalLog.innerHTML = player.journal.length
-  ? `<ul class="clean">${player.journal.map(j => `<li>${escapeHtml(j)}</li>`).join("")}</ul>`
-  : `<span class="small">No reflections yet.</span>`;
-
-  core.style.boxShadow = player.loop_sync_state
-    ? "0 0 42px rgba(34, 197, 94, 0.65)"
-    : "0 0 24px rgba(250, 204, 21, 0.55)";
-
-  core.style.filter = player.loop_sync_state
-    ? "hue-rotate(40deg) saturate(1.2)"
-    : "none";
-
-  halo.style.opacity = player.loop_sync_state ? "1" : "0.45";
-  halo.style.filter = player.loop_sync_state ? "brightness(1.4)" : "brightness(1)";
-
-    }
-
-    function escapeHtml(str) {
-      return str
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;");
-    }
-
-    function grow() {
-      player.growth_state += 1;
-
-      let msg = `Growth rises to ${player.growth_state}.`;
-      if (player.growth_state >= 3) {
-        msg += " " + player.earnToken("growth_3");
-      }
-      if (player.growth_state >= 4) {
-        player.loop_sync_state = true;
-        msg += " Spiral sync becomes possible.";
-      }
-
-      dragonSay(msg);
-      updateVisuals();
-    }
-
-    function waterOther() {
-  const msg = player.earnToken("watered_other");
-
-  if (player.loop_sync_state) {
-    player.inventory.push(new Token("EchoBubble"));
-    dragonSay("The field is aligned. Care carries farther.");
-  } else {
-    dragonSay(msg);
-  }
-
-  updateVisuals();
-  
-    }
-
-    function spiralSync() {
-      if (player.growth_state < 4) {
-        dragonSay("The rings are not ready. Grow further before spiral sync can hold.");
-        return;
-      }
-
-      player.loop_sync_state = !player.loop_sync_state;
-      let msg = player.loop_sync_state
-        ? "The loop settles into resonance."
-        : "The loop quiets and loosens.";
-
-      if (player.loop_sync_state) {
-        msg += " " + player.earnToken("spiral_sync");
-      }
-
-      dragonSay(msg);
-      updateVisuals();
-    }
-
-    function prune() {
-      const msg = player.earnToken("pruned");
-      dragonSay(msg + " Reflection is a valid move.");
-      updateVisuals();
-    }
-
-    function useSelectedToken() {
-      const tokenType = tokenSelect.value;
-      const content = contentInput.value.trim();
-
-      if (!content) {
-        dragonSay("The dragon waits. Give the token something to carry.");
-        return;
-      }
-
-      const used = player.useToken(tokenType, content);
-      if (!used) {
-        dragonSay(`No ${tokenType} is present in the hoard.`);
-        return;
-      }
-
-      dragonSay(
-        tokenType === "ReflectionToken"
-          ? "The field folds inward. Your reflection is kept."
-          : `${tokenType} released into the garden.`
-      );
-
-      contentInput.value = "";
+      player.journal.push(entry);
+      dragonSay("This moment is preserved.");
       updateVisuals();
     }
 
     function resetGarden() {
+      lastAction = "Reset Garden";
       player.growth_state = 0;
       player.loop_sync_state = false;
       player.inventory = [];
