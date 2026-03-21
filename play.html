@@ -387,7 +387,42 @@
     const contentInput = document.getElementById("contentInput");
     const core = document.getElementById("core");
     const halo = document.getElementById("halo");
+function dragonRespond(context) {
+  const g = player.growth_state;
+  const sync = player.loop_sync_state;
+  const tokens = player.inventory.length;
 
+  // 🌱 Early stage
+  if (g < 2) {
+    return "The field is quiet. Small motions still matter.";
+  }
+
+  // 🌿 Growing
+  if (g >= 2 && g < 4) {
+    if (context === "grow") {
+      return "Something is taking root.";
+    }
+    if (context === "water") {
+      return "You stabilize more than yourself.";
+    }
+  }
+
+  // 🌀 Sync unlocked
+  if (g >= 4 && !sync) {
+    return "The rings are close to aligning.";
+  }
+
+  // ✨ In sync
+  if (sync) {
+    if (tokens > 3) {
+      return "Your hoard is heavy. Choose what to release.";
+    }
+    return "The field hums. You are not alone in it.";
+  }
+
+  // 🐉 Default fallback
+  return "The dragon watches.";
+}
     function dragonSay(msg) {
       dragonBox.textContent = msg;
     }
