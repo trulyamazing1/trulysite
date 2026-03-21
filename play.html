@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -444,8 +445,10 @@ function dragonRespond(context) {
         ? `<ul class="clean">${player.journal.map(j => `<li>${escapeHtml(j)}</li>`).join("")}</ul>`
         : `<span class="small">No reflections yet.</span>`;
 
-      const scale = 1 + Math.min(player.growth_state * 0.04, 0.24);
-     core.style.boxShadow = player.loop_sync_state
+   const scale = 1 + Math.min(player.growth_state * 0.04, 0.24);
+core.style.transform = `scale(${scale})`;
+
+core.style.boxShadow = player.loop_sync_state
   ? "0 0 42px rgba(34, 197, 94, 0.65)"
   : "0 0 24px rgba(250, 204, 21, 0.55)";
 
@@ -454,7 +457,7 @@ core.style.filter = player.loop_sync_state
   : "none";
 
 halo.style.opacity = player.loop_sync_state ? "1" : "0.45";
-      halo.style.filter = player.loop_sync_state ? "brightness(1.4)" : "brightness(1)";const scale = 1 + Math.min(player.growth_state * 0.04, 0.24);
+halo.style.filter = player.loop_sync_state ? "brightness(1.4)" : "brightness(1)"; + Math.min(player.growth_state * 0.04, 0.24);
 core.style.transform = `scale(${scale})`;
 
 core.style.boxShadow = player.loop_sync_state
