@@ -323,7 +323,7 @@
       constructor(type, expires = false) {
         this.type = type;
         this.expires = expires;
-      }
+      
     }
 
     class Player {
@@ -441,10 +441,9 @@ function dragonRespond(context) {
     ? `<ul class="clean">${player.message_log.map(m => `<li>${escapeHtml(m)}</li>`).join("")}</ul>`
     : `<span class="small">No messages have been released into the field yet.</span>`;
 
-  journalLog.innerHTML = player.journal.length
-    ? `<ul class="clean">${player.journal.map(j => `<li>${escapeHt
-  ml(j)}</li>`).join("")}</ul>`
-    : `<span class="small">No reflections yet.</span>`;
+journalLog.innerHTML = player.journal.length
+  ? `<ul class="clean">${player.journal.map(j => `<li>${escapeHtml(j)}</li>`).join("")}</ul>`
+  : `<span class="small">No reflections yet.</span>`;
 
   core.style.boxShadow = player.loop_sync_state
     ? "0 0 42px rgba(34, 197, 94, 0.65)"
@@ -456,7 +455,7 @@ function dragonRespond(context) {
 
   halo.style.opacity = player.loop_sync_state ? "1" : "0.45";
   halo.style.filter = player.loop_sync_state ? "brightness(1.4)" : "brightness(1)";
-}
+
     }
 
     function escapeHtml(str) {
