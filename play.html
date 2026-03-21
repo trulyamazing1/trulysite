@@ -478,9 +478,19 @@ function dragonRespond(context) {
     }
 
     function waterOther() {
-      const msg = player.earnToken("watered_other");
-      dragonSay(msg + " Lending stabilizes the field.");
-      updateVisuals();
+  lastAction = "Water Other";
+
+  const msg1 = player.earnToken("watered_other");
+
+  if (player.loop_sync_state) {
+    player.inventory.push(new Token("EchoBubble"));
+    dragonSay("The field is aligned. Care carries farther.");
+  } else {
+    dragonSay("An EchoBubble rises from the field.");
+  }
+
+  updateVisuals();
+}
     }
 
     function spiralSync() {
