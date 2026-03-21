@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=3.0"/>
-  <title>Enter The Garden</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enter the Garden</title>
+
   <style>
     :root {
       --bg: #020617;
@@ -15,13 +16,15 @@
       --green-dark: #16a34a;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
       background: var(--bg);
       color: var(--text);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: system-ui, sans-serif;
       line-height: 1.65;
     }
 
@@ -104,21 +107,22 @@
       margin-top: 28px;
     }
 
-    .back {
+    .button {
       display: inline-block;
-      margin-top: 10px;
+      margin-top: 14px;
       background: var(--green);
       color: #022c22;
       text-decoration: none;
       padding: 11px 18px;
       border-radius: 10px;
       font-weight: 700;
-      transition: background 0.2s ease, transform 0.2s ease;
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .back:hover {
+    .button:hover {
       background: var(--green-dark);
       transform: translateY(-1px);
+      box-shadow: 0 0 18px rgba(34, 197, 94, 0.28);
     }
 
     .tiny-dragon {
@@ -138,31 +142,20 @@
     <section class="panel">
       <h2>what this is</h2>
       <p>Binary Garden is a small interactive system.</p>
-      <p>It looks simple. It is not trying to overwhelm you.</p>
-      <p>It explores:</p>
-      <ul>
-        <li>movement as learning</li>
-        <li>systems that respond instead of instructing</li>
-        <li>how meaning accumulates through interaction</li>
-      </ul>
+      <p>It looks simple, but it explores movement as learning, systems that respond instead of instructing, and meaning that accumulates through interaction.</p>
     </section>
 
     <section class="panel">
       <h2>core idea</h2>
       <blockquote>what you carry forward matters.</blockquote>
-      <p>This game redefines winning.</p>
+      <p>This is not a game about winning.</p>
       <p>It is a space for observing, interacting, and noticing what changes.</p>
     </section>
 
     <section class="panel">
       <h2>dragon ring</h2>
       <p>Binary Garden is part of a larger system.</p>
-      <p>A learning environment where:</p>
-      <ul>
-        <li>motion reveals structure</li>
-        <li>feedback replaces instruction</li>
-        <li>understanding emerges through interaction</li>
-      </ul>
+      <p>A learning environment where motion reveals structure, feedback replaces instruction, and understanding emerges through interaction.</p>
     </section>
 
     <section class="panel">
@@ -173,7 +166,7 @@
 
     <div class="footer">
       <blockquote>The dragon does not tell you what to do. It shows you what changed.</blockquote>
-      <a class="back" href="index.html">← return</a>
+      <a class="button" href="index.html">← return</a>
       <div class="tiny-dragon">🐉</div>
     </div>
   </main>
