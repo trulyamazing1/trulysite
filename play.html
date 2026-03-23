@@ -246,9 +246,9 @@
 <body>
   <main class="wrap">
     <div class="topbar">
-      <h1>🐉 Binary Garden</h1>
+      <h1>🐉 Hatchery</h1>
       <div class="nav">
-        <a href="garden.html">← Garden</a>
+        <a href="play.html">← Hatchery</a>
         <a href="index.html">Home</a>
       </div>
     </div>
@@ -588,14 +588,14 @@
       updateVisuals();
     }
 
-    function resetGarden() {
+    function resetHatchery() {
       lastAction = "Reset Hatchery";
       player.growth_state = 0;
       player.loop_sync_state = false;
       player.inventory = [];
       player.message_log = [];
       player.journal = [];
-      dragonSay("The garden returns to stillness.");
+      dragonSay("The hatchery returns to stillness.");
       updateVisuals();
     }
 
