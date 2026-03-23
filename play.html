@@ -338,7 +338,7 @@
     }
 
     class Player {
-      constructor(id, gardenId = "binary-garden") {
+      constructor(id, gardenId = "hatchery") {
         this.id = id;
         this.garden_id = gardenId;
         this.growth_state = 0;
@@ -589,7 +589,7 @@
     }
 
     function resetGarden() {
-      lastAction = "Reset Garden";
+      lastAction = "Reset Hatchery";
       player.growth_state = 0;
       player.loop_sync_state = false;
       player.inventory = [];
