@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Mythic Menagerie</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <main class="page-wrap">
+    <header class="topbar">
+      <a href="index.html" class="mini-link">← Home</a>
+      <h1>The Mythic Menagerie</h1>
+      <a href="hatchery.html" class="mini-link">Hatchery →</a>
+    </header>
+
+    <section class="certificate-card" id="certificateCard">
+      <h2>Latest Provenance Record</h2>
+      <div id="certificateContent">
+        <p>No creature recorded yet.</p>
+        <p>Enter the Hatchery and complete a session to add one.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/menagerie.js"></script>
+</body>
+</html>
