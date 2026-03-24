@@ -669,6 +669,55 @@
     updateMeters();
     queueBlink();
     addLog('The egg was placed in your care', 'It cannot answer yet. But it can receive, remember, and become.');
-  </script>
-</body>
-</html>
+
+// =========================
+// 🐉 BED BATH & BEYOND LAYER
+// =========================
+
+function careBed() {
+  state.trust = clamp(state.trust + 0.05, 0, 1);
+  state.coherence = clamp(state.coherence + 0.04, 0, 1);
+  setStatus("You soften the space around it. The egg settles. It feels held.");
+  updateMeters();
+}
+
+function careBath() {
+  state.coherence = clamp(state.coherence + 0.06, 0, 1);
+  state.curiosity = clamp(state.curiosity + 0.02, 0, 1);
+  setStatus("You clear what clings to it. The surface brightens. It feels more itself.");
+  updateMeters();
+}
+
+function careSocial() {
+  state.curiosity = clamp(state.curiosity + 0.05, 0, 1);
+  state.trust = clamp(state.trust + 0.03, 0, 1);
+  setStatus("You move, and it tries to follow. Not perfectly. But with intent.");
+  updateMeters();
+}
+
+function careFeed() {
+  state.curiosity = clamp(state.curiosity + 0.06, 0, 1);
+  state.coherence = clamp(state.coherence + 0.03, 0, 1);
+  setStatus("It takes in what you offer. Something in it grows outward.");
+  updateMeters();
+}
+
+function checkContentment() {
+  const content = (
+    state.coherence > 0.6 &&
+    state.trust > 0.6 &&
+    state.curiosity < 0.6
+  );
+
+  if (content) {
+    state.coherence = clamp(state.coherence + 0.02, 0, 1);
+    setStatus("Nothing is required. It rests. The shape holds.");
+  }
+}
+
+// hook into update cycle
+const originalUpdate = updateMeters;
+updateMeters = function() {
+  originalUpdate();
+  checkContentment();
+};
