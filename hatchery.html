@@ -4,7 +4,418 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hatchery</title>
-  <link rel="stylesheet" href="css/styles.css" />
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hatchery</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --panel: #171a22;
+      --panel-2: #1f2430;
+      --text: #f5f7fb;
+      --muted: #b9c0d0;
+      --accent: #d9b45b;
+      --egg-size: 260px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, serif;
+      background: radial-gradient(circle at top, #1b2030 0%, var(--bg) 50%, #090b10 100%);
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page-wrap {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .mini-link {
+      color: var(--muted);
+    }
+
+    .game-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1.5rem;
+    }
+
+    .egg-panel {
+      background: rgba(23, 26, 34, 0.65);
+      border-radius: 18px;
+      min-height: 520px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .egg {
+      width: var(--egg-size);
+      height: calc(var(--egg-size) * 1.25);
+      border-radius: 50% 50% 48% 48% / 58% 58% 42% 42%;
+      position: relative;
+      background: radial-gradient(circle at 45% 35%, #f0eadc, #bbb3a3 65%, #857d70 100%);
+      box-shadow: inset 0 0 20px rgba(255,255,255,0.25), 0 20px 50px rgba(0,0,0,0.45);
+      overflow: hidden;
+    }
+
+    .yolk {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      position: absolute;
+      top: 34%;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: background 0.35s ease, box-shadow 0.35s ease, transform 0.25s ease;
+    }
+
+    .yolk.gold {
+      background: radial-gradient(circle at 30% 30%, #fff4ba, #e7c542 60%, #b07d14 100%);
+      box-shadow: 0 0 35px rgba(231, 197, 66, 0.65);
+    }
+
+    .yolk.blue {
+      background: radial-gradient(circle at 30% 30%, #d9efff, #7eb4ff 60%, #4169aa 100%);
+      box-shadow: 0 0 35px rgba(126, 180, 255, 0.65);
+    }
+
+    .yolk.green {
+      background: radial-gradient(circle at 30% 30%, #def8d7, #67bb75 60%, #2c7138 100%);
+      box-shadow: 0 0 30px rgba(103, 187, 117, 0.55);
+    }
+
+    .yolk.red {
+      background: radial-gradient(circle at 30% 30%, #ffd4d4, #de6666 60%, #8f2c2c 100%);
+      box-shadow: 0 0 36px rgba(222, 102, 102, 0.6);
+    }
+
+    .yolk.purple {
+      background: radial-gradient(circle at 30% 30%, #f3ddff, #b26dff 60%, #5c2b8e 100%);
+      box-shadow: 0 0 42px rgba(178, 109, 255, 0.7);
+    }
+
+    .yolk.gray {
+      background: radial-gradient(circle at 30% 30%, #eeeeee, #aaaaaa 60%, #666666 100%);
+      box-shadow: 0 0 20px rgba(160, 160, 160, 0.45);
+    }
+
+    .shell-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at center, transparent 0 34%, rgba(30, 35, 44, 0.0) 36%),
+        linear-gradient(to bottom, rgba(12, 13, 20, 0) 0%, rgba(12, 13, 20, 0.35) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .eye-mark {
+      width: 34px;
+      height: 20px;
+      border-radius: 50%;
+      position: absolute;
+      top: 28%;
+      left: 57%;
+      background: #111;
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.15);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .control-panel {
+      background: rgba(23, 26, 34, 0.92);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 18px;
+      padding: 1.5rem;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin: 1rem 0 1.5rem;
+    }
+
+    button {
+      background: var(--panel-2);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 0.9rem 1.2rem;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary-action {
+      background: linear-gradient(135deg, var(--accent), #f0d18e);
+      color: #1f1607;
+      font-weight: bold;
+    }
+
+    .small-note,
+    .readout p {
+      color: var(--muted);
+    }
+
+    @media (max-width: 860px) {
+      .game-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-wrap">
+    <header class="topbar">
+      <a href="index.html" class="mini-link">← Home</a>
+      <h1>🐣 Hatchery</h1>
+      <a href="menagerie.html" class="mini-link">Menagerie →</a>
+    </header>
+
+    <section class="game-layout">
+      <div class="egg-panel">
+        <div id="egg" class="egg">
+          <div id="yolk" class="yolk gold"></div>
+          <div id="shellOverlay" class="shell-overlay"></div>
+          <div id="eyeMark" class="eye-mark hidden"></div>
+        </div>
+      </div>
+
+      <aside class="control-panel">
+        <h2>Attunement</h2>
+        <p class="small-note">
+          The yolk responds to rhythm, variation, and pressure.
+        </p>
+
+        <div class="controls">
+          <button type="button" data-action="gentle">Gentle</button>
+          <button type="button" data-action="vary">Vary</button>
+          <button type="button" data-action="repeat">Repeat</button>
+          <button type="button" data-action="chaos">Chaos</button>
+          <button type="button" id="hatchBtn" class="primary-action">Complete Hatchery Session</button>
+        </div>
+
+        <div class="readout">
+          <p><strong>State:</strong> <span id="stateLabel">Growth</span></p>
+          <p><strong>Color Path:</strong> <span id="pathLabel">gold</span></p>
+          <p><strong>Variation:</strong> <span id="variationValue">0</span></p>
+          <p><strong>Repetition:</strong> <span id="repetitionValue">0</span></p>
+          <p><strong>Stress:</strong> <span id="stressValue">0</span></p>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const yolk = document.getElementById("yolk");
+    const shellOverlay = document.getElementById("shellOverlay");
+    const eyeMark = document.getElementById("eyeMark");
+
+    const stateLabel = document.getElementById("stateLabel");
+    const pathLabel = document.getElementById("pathLabel");
+    const variationValue = document.getElementById("variationValue");
+    const repetitionValue = document.getElementById("repetitionValue");
+    const stressValue = document.getElementById("stressValue");
+    const hatchBtn = document.getElementById("hatchBtn");
+
+    const state = {
+      variation: 0,
+      repetition: 0,
+      stress: 0,
+      calm: 0,
+      history: ["gold"],
+      currentColor: "gold"
+    };
+
+    const buttons = document.querySelectorAll("[data-action]");
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const action = btn.dataset.action;
+        applyAction(action);
+        renderState();
+      });
+    });
+
+    hatchBtn.addEventListener("click", completeSession);
+
+    function applyAction(action) {
+      if (action === "gentle") {
+        state.calm += 2;
+        state.stress = Math.max(0, state.stress - 1);
+        state.variation += 1;
+      }
+
+      if (action === "vary") {
+        state.variation += 2;
+        state.calm += 1;
+      }
+
+      if (action === "repeat") {
+        state.repetition += 2;
+        state.variation = Math.max(0, state.variation - 1);
+      }
+
+      if (action === "chaos") {
+        state.stress += 2;
+        state.variation += 1;
+        state.calm = Math.max(0, state.calm - 1);
+      }
+
+      state.currentColor = determineColor();
+      state.history.push(state.currentColor);
+
+      if (state.history.length > 12) {
+        state.history.shift();
+      }
+    }
+
+    function determineColor() {
+      if (state.repetition >= 6) return "green";
+      if (state.stress >= 6) return "red";
+      if (state.variation >= 7 && state.calm >= 5) return "purple";
+      if (state.calm >= 5 && state.variation >= 4) return "blue";
+      return "gold";
+    }
+
+    function renderState() {
+      variationValue.textContent = state.variation;
+      repetitionValue.textContent = state.repetition;
+      stressValue.textContent = state.stress;
+      pathLabel.textContent = state.history.join(" → ");
+
+      yolk.className = "yolk " + state.currentColor;
+
+      eyeMark.classList.add("hidden");
+      shellOverlay.style.opacity = "0";
+
+      if (state.currentColor === "gold") {
+        stateLabel.textContent = "Growth";
+      }
+
+      if (state.currentColor === "blue") {
+        stateLabel.textContent = "Attunement";
+      }
+
+      if (state.currentColor === "green") {
+        stateLabel.textContent = "Stability / Repetition";
+        shellOverlay.style.opacity = "0.45";
+        if (state.repetition >= 8) {
+          eyeMark.classList.remove("hidden");
+        }
+      }
+
+      if (state.currentColor === "red") {
+        stateLabel.textContent = "Stress";
+      }
+
+      if (state.currentColor === "purple") {
+        stateLabel.textContent = "Emergence";
+      }
+    }
+
+    function determineCreature() {
+      const greenCount = state.history.filter(c => c === "green").length;
+      const purpleCount = state.history.filter(c => c === "purple").length;
+      const blueCount = state.history.filter(c => c === "blue").length;
+      const goldCount = state.history.filter(c => c === "gold").length;
+
+      if (greenCount >= 4 || state.repetition >= 8) {
+        return {
+          name: "Watcher",
+          symbol: "🪰",
+          origin: "Repetition",
+          text: "Born of routine, this creature learned not to reach—but to remain."
+        };
+      }
+
+      if (purpleCount >= 1 && state.variation >= 4 && state.calm >= 3 && purpleCount < 3) {
+        return {
+          name: "Kit",
+          symbol: "🐣",
+          origin: "Learning Variation",
+          text: "This creature formed where change was welcomed, but not yet held long enough for full emergence."
+        };
+      }
+
+      if (blueCount >= 2 && goldCount >= 2 && state.calm >= 5 && state.variation >= 5 && purpleCount === 0) {
+        return {
+          name: "Labrilion",
+          symbol: "🦁",
+          origin: "Refined Mastery",
+          text: "Steady, warm, and balanced, this creature formed where change was welcomed without being chased."
+        };
+      }
+
+      if (blueCount >= 2 && goldCount >= 2 && state.variation >= 7) {
+        return {
+          name: "Fox Creature",
+          symbol: "🦊",
+          origin: "Expressive Variation",
+          text: "Colorful and bright, with fur, wings, and a scaled belly, this creature formed through playful diversity."
+        };
+      }
+
+      if (purpleCount >= 3 && state.variation >= 7 && state.calm >= 5) {
+        return {
+          name: "Dragon",
+          symbol: "🐉",
+          origin: "Successful Emergence",
+          text: "This creature emerged through variation, persistence, and coherence strong enough to hold becoming."
+        };
+      }
+
+      return {
+        name: "Unformed Echo",
+        symbol: "✨",
+        origin: "Partial Session",
+        text: "Something stirred here, but did not yet settle into a known form."
+      };
+    }
+
+    function completeSession() {
+      const creature = determineCreature();
+      localStorage.setItem("latestCreature", JSON.stringify(creature));
+      window.location.href = "menagerie.html";
+    }
+
+    renderState();
+  </script>
+</body>
+</html>
 </head>
 <body>
   <main class="page-wrap">
