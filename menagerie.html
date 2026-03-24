@@ -1,404 +1,187 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Mythic Menagerie</title>
-  <style>
-    :root {
-      --bg: #0b1020;
-      --bg2: #121933;
-      --panel: rgba(12, 18, 35, 0.82);
-      --panel-border: rgba(255, 255, 255, 0.08);
-      --text: #f6f1e8;
-      --muted: #c9c0b3;
-      --accent: #d4b063;
-      --accent-soft: #f0d18e;
-      --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
-      --radius: 24px;
+const yolk = {
+    coherence: 0.2,
+    regulation: 0.2,
+    temporal_field: 0.2,
+    attunement: 0.2,
+    exploration_seed: 0.2,
+    sensitivity: 0.3,
+    stress: 0.2,
+
+    wavecall_seed: 0.0,
+    stonebind_seed: 0.0,
+    windshift_seed: 0.0,
+
+    breath_scale: 1.0,
+    glow_intensity: 0.5,
+    glow_color: "#FFD700",
+    pulse_speed: 6.0,
+    shell_opacity: 0.0,
+    shell_flicker: 0.0
+  };
+
+  const triad = generateWeights();
+
+  function clamp01(x) {
+    return Math.max(0, Math.min(1, x));
+  }
+
+  function normalizeTriad(t) {
+    const total = t.stabilizer + t.spark + t.mirror;
+    return {
+      stabilizer: t.stabilizer / total,
+      spark: t.spark / total,
+      mirror: t.mirror / total
+    };
+  }
+
+  function generateWeights() {
+    const a = Math.random();
+    const b = Math.random();
+    const c = Math.random();
+    return normalizeTriad({
+      stabilizer: a,
+      spark: b,
+      mirror: c
+    });
+  }
+
+  function driftTriad(t, amount = 0.02) {
+    t.stabilizer = clamp01(t.stabilizer + (Math.random() * 2 - 1) * amount);
+    t.spark = clamp01(t.spark + (Math.random() * 2 - 1) * amount);
+    t.mirror = clamp01(t.mirror + (Math.random() * 2 - 1) * amount);
+
+    const n = normalizeTriad(t);
+    t.stabilizer = n.stabilizer;
+    t.spark = n.spark;
+    t.mirror = n.mirror;
+  }
+
+  function applyTriadToYolk(y, t, userX = 0.5, userY = 0.5) {
+    // Base personality shaping
+    y.coherence = clamp01(0.25 + t.stabilizer * 0.6 + t.mirror * 0.1);
+    y.regulation = clamp01(0.2 + t.stabilizer * 0.7);
+    y.temporal_field = clamp01(0.15 + t.mirror * 0.65);
+    y.attunement = clamp01(0.2 + t.mirror * 0.5 + userX * 0.2);
+    y.exploration_seed = clamp01(0.15 + t.spark * 0.7 + userY * 0.15);
+
+    // Spark makes the system more volatile, stabilizer calms it
+    const instability = t.spark * 0.5 - t.stabilizer * 0.25;
+    y.stress = clamp01(0.15 + instability + (1 - userX) * 0.15);
+  }
+
+  function yolkUpdate(y) {
+    if (y.stress > 0.5) {
+      y.regulation = clamp01(y.regulation - 0.04);
+      y.coherence = clamp01(y.coherence - 0.03);
     }
 
-    * {
-      box-sizing: border-box;
+    if (y.stress < 0.3) {
+      y.coherence = clamp01(y.coherence + 0.02);
+      y.regulation = clamp01(y.regulation + 0.02);
     }
 
-    html, body {
-      margin: 0;
-      min-height: 100%;
+    y.wavecall_seed = clamp01(
+      y.wavecall_seed + 0.01 * (y.attunement + y.regulation)
+    );
+
+    y.stonebind_seed = clamp01(
+      y.stonebind_seed + 0.01 * (y.coherence + y.temporal_field)
+    );
+
+    y.windshift_seed = clamp01(
+      y.windshift_seed + 0.01 * y.exploration_seed
+    );
+
+    y.breath_scale = 1 + 0.4 * y.coherence;
+    y.glow_intensity = 0.2 + 0.8 * y.regulation;
+
+    const stress = y.stress;
+    y.glow_color = `rgb(
+      255,
+      ${Math.floor(215 - stress * 100)},
+      ${Math.floor(stress * 150)}
+    )`;
+
+    y.pulse_speed = 8 - 4 * y.attunement;
+    y.shell_opacity = y.coherence;
+    y.shell_flicker =
+      (y.wavecall_seed + y.stonebind_seed + y.windshift_seed) / 3;
+  }
+
+  function updateYolkVisuals(data) {
+    const yolkEl = document.querySelector(".breath-circle");
+    const shell = document.querySelector(".shell");
+
+    yolkEl.style.setProperty("--scale", data.breath_scale);
+    yolkEl.style.setProperty("--glow", data.glow_intensity);
+    yolkEl.style.setProperty("--color", data.glow_color);
+    yolkEl.style.setProperty("--speed", data.pulse_speed + "s");
+
+    shell.style.opacity = data.shell_opacity;
+    shell.style.filter = `brightness(${1 + data.shell_flicker})`;
+  }
+
+  function updateDebugPanel(t, y) {
+    let panel = document.getElementById("debug-panel");
+    if (!panel) {
+      panel = document.createElement("div");
+      panel.id = "debug-panel";
+      panel.style.position = "fixed";
+      panel.style.top = "12px";
+      panel.style.left = "12px";
+      panel.style.padding = "10px 12px";
+      panel.style.background = "rgba(0,0,0,0.55)";
+      panel.style.color = "white";
+      panel.style.fontFamily = "monospace";
+      panel.style.fontSize = "12px";
+      panel.style.borderRadius = "8px";
+      panel.style.lineHeight = "1.5";
+      document.body.appendChild(panel);
     }
 
-    body {
-      font-family: Georgia, serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top, #1a2347 0%, var(--bg2) 30%, var(--bg) 75%, #06080f 100%);
-      overflow-x: hidden;
-    }
+    panel.innerHTML = `
+      <div><strong>TRIAD</strong></div>
+      <div>stabilizer: ${t.stabilizer.toFixed(2)}</div>
+      <div>spark:      ${t.spark.toFixed(2)}</div>
+      <div>mirror:     ${t.mirror.toFixed(2)}</div>
+      <br>
+      <div><strong>YOLK</strong></div>
+      <div>coherence:  ${y.coherence.toFixed(2)}</div>
+      <div>regulation: ${y.regulation.toFixed(2)}</div>
+      <div>attunement: ${y.attunement.toFixed(2)}</div>
+      <div>explore:    ${y.exploration_seed.toFixed(2)}</div>
+      <div>stress:     ${y.stress.toFixed(2)}</div>
+    `;
+  }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+  let userX = 0.5;
+  let userY = 0.5;
 
-    .page-wrap {
-      width: min(980px, 92%);
-      margin: 0 auto;
-      padding: 2rem 0 3rem;
-    }
+  document.body.addEventListener("mousemove", (e) => {
+    userX = e.clientX / window.innerWidth;
+    userY = e.clientY / window.innerHeight;
+  });
 
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      color: var(--muted);
-      font-size: 1.05rem;
-    }
+  setInterval(() => {
+    driftTriad(triad, 0.01);
+    applyTriadToYolk(yolk, triad, userX, userY);
+    yolkUpdate(yolk);
+    updateYolkVisuals(yolk);
+    updateDebugPanel(triad, yolk);
+  }, 200);
+  function applyHolding(y, t) {
+  // Stabilizer = warmth + containment
+  const holding_strength = t.stabilizer;
 
-    .topbar a:hover {
-      color: var(--text);
-    }
+  // reduce visual volatility when holding is high
+  y.pulse_speed += holding_strength * 1.5;
+  y.glow_intensity += holding_strength * 0.2;
 
-    .hero {
-      text-align: center;
-      margin-bottom: 1.75rem;
-    }
+  // soften stress expression
+  y.stress *= (1 - holding_strength * 0.3);
 
-    .eyebrow {
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 0.8rem;
-    }
-
-    .hero h1 {
-      margin: 0;
-      font-size: clamp(2.2rem, 5vw, 3.8rem);
-      line-height: 1.1;
-    }
-
-    .hero p {
-      margin: 0.8rem auto 0;
-      max-width: 680px;
-      color: var(--muted);
-      font-size: 1.1rem;
-      line-height: 1.6;
-    }
-
-    .reveal-card {
-      position: relative;
-      background: var(--panel);
-      border: 1px solid var(--panel-border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 2.2rem 1.6rem 2rem;
-      overflow: hidden;
-      backdrop-filter: blur(8px);
-    }
-
-    .reveal-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 50% 12%, rgba(255, 231, 178, 0.09), transparent 32%),
-        radial-gradient(circle at 50% 0%, rgba(140, 120, 255, 0.08), transparent 28%);
-      pointer-events: none;
-    }
-
-    .record-label {
-      position: relative;
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 1.4rem;
-    }
-
-    .creature-stage {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 260px;
-      margin-bottom: 1.25rem;
-    }
-
-    .halo {
-      position: absolute;
-      width: min(340px, 72vw);
-      height: min(340px, 72vw);
-      border-radius: 50%;
-      filter: blur(10px);
-      opacity: 0.9;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
-      background: radial-gradient(circle, rgba(212,176,99,0.28) 0%, rgba(212,176,99,0.08) 42%, transparent 70%);
-    }
-
-    .creature-symbol {
-      position: relative;
-      z-index: 1;
-      font-size: clamp(5rem, 14vw, 8.5rem);
-      line-height: 1;
-      text-align: center;
-      filter: drop-shadow(0 0 18px rgba(255, 236, 180, 0.18));
-    }
-
-    .creature-name {
-      position: relative;
-      text-align: center;
-      margin: 0.25rem 0 0.5rem;
-      font-size: clamp(2rem, 5vw, 3rem);
-      line-height: 1.1;
-    }
-
-    .creature-subtitle {
-      text-align: center;
-      color: var(--muted);
-      font-size: 1.02rem;
-      margin-bottom: 1.6rem;
-    }
-
-    .meta-row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.9rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .meta-box {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 16px;
-      padding: 0.95rem 1rem;
-    }
-
-    .meta-label {
-      color: var(--muted);
-      font-size: 0.82rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 0.35rem;
-    }
-
-    .meta-value {
-      font-size: 1.05rem;
-    }
-
-    .provenance {
-      background: rgba(255,255,255,0.035);
-      border-left: 3px solid var(--accent);
-      border-radius: 16px;
-      padding: 1.1rem 1.15rem 1.1rem 1.2rem;
-      line-height: 1.75;
-      font-size: 1.06rem;
-    }
-
-    .keeper-note {
-      margin: 1rem 0 0;
-      color: var(--muted);
-      font-style: italic;
-      line-height: 1.6;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.9rem;
-      justify-content: center;
-      margin-top: 1.8rem;
-    }
-
-    .button {
-      display: inline-block;
-      padding: 0.95rem 1.3rem;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.05);
-      color: var(--text);
-      font-size: 1rem;
-      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
-    }
-
-    .button:hover {
-      transform: translateY(-1px);
-      background: rgba(255,255,255,0.08);
-    }
-
-    .button.primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
-      color: #1b1407;
-      font-weight: bold;
-      border-color: transparent;
-    }
-
-    .button.primary:hover {
-      background: linear-gradient(135deg, #dfbd72, #f4db9f);
-    }
-
-    .footer-line {
-      text-align: center;
-      margin-top: 1.5rem;
-      color: var(--muted);
-      font-size: 0.98rem;
-      letter-spacing: 0.02em;
-    }
-
-    .dragon .halo {
-      background: radial-gradient(circle, rgba(153, 99, 255, 0.30) 0%, rgba(153, 99, 255, 0.09) 42%, transparent 70%);
-      box-shadow: 0 0 50px rgba(153, 99, 255, 0.18);
-    }
-
-    .dragon .creature-name,
-    .dragon .creature-symbol {
-      text-shadow:
-        0 0 18px rgba(153, 99, 255, 0.18),
-        0 0 30px rgba(153, 99, 255, 0.12);
-    }
-
-    .watcher .halo {
-      background: radial-gradient(circle, rgba(100, 220, 130, 0.24) 0%, rgba(100, 220, 130, 0.08) 42%, transparent 70%);
-    }
-
-    .kit .halo {
-      background: radial-gradient(circle, rgba(120, 180, 255, 0.24) 0%, rgba(120, 180, 255, 0.08) 42%, transparent 70%);
-    }
-
-    .labrilion .halo {
-      background: radial-gradient(circle, rgba(245, 195, 110, 0.28) 0%, rgba(245, 195, 110, 0.08) 42%, transparent 70%);
-    }
-
-    .fox .halo {
-      background: radial-gradient(circle, rgba(255, 160, 110, 0.28) 0%, rgba(255, 160, 110, 0.08) 42%, transparent 70%);
-    }
-
-    @media (max-width: 700px) {
-      .meta-row {
-        grid-template-columns: 1fr;
-      }
-
-      .reveal-card {
-        padding: 1.5rem 1rem 1.5rem;
-      }
-
-      .topbar {
-        font-size: 0.98rem;
-      }
-    }
-  </style>
-</head>
-<body>
-  <main class="page-wrap">
-    <header class="topbar">
-      <a href="index.html">← Home</a>
-      <a href="hatchery.html">Return to Hatchery →</a>
-    </header>
-
-    <section class="hero">
-      <div class="eyebrow">The Mythic Menagerie</div>
-      <h1>A Creature Has Entered the Menagerie</h1>
-      <p>
-        The shell has fallen away. What follows is not a result, but a beginning.
-      </p>
-    </section>
-
-    <section class="reveal-card" id="revealCard">
-      <div class="record-label">Witnessed</div>
-
-      <div id="certificateContent">
-        <div class="creature-stage">
-          <div class="halo"></div>
-          <div class="creature-symbol">✨</div>
-        </div>
-
-        <h2 class="creature-name">No Creature Recorded</h2>
-        <div class="creature-subtitle">The Menagerie is waiting.</div>
-
-        <div class="meta-row">
-          <div class="meta-box">
-            <div class="meta-label">Origin</div>
-            <div class="meta-value">Unwritten</div>
-          </div>
-          <div class="meta-box">
-            <div class="meta-label">State</div>
-            <div class="meta-value">No hatch completed</div>
-          </div>
-        </div>
-
-        <div class="provenance">
-          Enter the Hatchery and complete a session to bring a being into the Menagerie.
-        </div>
-
-        <p class="keeper-note">
-          The Menagerie remembers.
-        </p>
-      </div>
-
-      <div class="actions">
-        <a class="button primary" href="play.html">Begin Bond</a>
-        <a class="button" href="hatchery.html">Return to Hatchery</a>
-      </div>
-
-      <div class="footer-line">The Menagerie’s memory is long.</div>
-    </section>
-  </main>
-
-  <script>
-    const container = document.getElementById("certificateContent");
-    const card = document.getElementById("revealCard");
-    const saved = localStorage.getItem("latestCreature");
-
-    function getCreatureClass(name) {
-      const lower = name.toLowerCase();
-
-      if (lower.includes("dragon")) return "dragon";
-      if (lower.includes("watcher")) return "watcher";
-      if (lower.includes("kit")) return "kit";
-      if (lower.includes("labrilion")) return "labrilion";
-      if (lower.includes("fox")) return "fox";
-      return "";
-    }
-
-    if (saved) {
-      const creature = JSON.parse(saved);
-      const creatureClass = getCreatureClass(creature.name);
-
-      if (creatureClass) {
-        card.classList.add(creatureClass);
-      }
-
-      container.innerHTML = `
-        <div class="creature-stage">
-          <div class="halo"></div>
-          <div class="creature-symbol">${creature.symbol}</div>
-        </div>
-
-        <h2 class="creature-name">${creature.name}</h2>
-        <div class="creature-subtitle">Recorded in the Menagerie</div>
-
-        <div class="meta-row">
-          <div class="meta-box">
-            <div class="meta-label">Origin</div>
-            <div class="meta-value">${creature.origin}</div>
-          </div>
-          <div class="meta-box">
-            <div class="meta-label">State</div>
-            <div class="meta-value">Born</div>
-          </div>
-        </div>
-
-        <div class="provenance">
-          ${creature.text}
-        </div>
-
-        <p class="keeper-note">
-          The Menagerie remembers.
-        </p>
-      `;
-    }
-  </script>
-</body>
-</html>
+  // add subtle warmth shift
+  if (holding_strength > 0.6) {
+    y.glow_color = "rgb(255, 210, 140)";
+  }
+}
