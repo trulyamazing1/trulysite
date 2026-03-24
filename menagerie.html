@@ -1,31 +1,38 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hatchery</title>
+  <title>The Mythic Menagerie</title>
   <style>
     :root {
-      --bg: #0f1117;
-      --panel: #171a22;
-      --panel-2: #1f2430;
-      --text: #f5f7fb;
-      --muted: #b9c0d0;
-      --accent: #d9b45b;
-      --egg-size: 260px;
+      --bg: #0b1020;
+      --bg2: #121933;
+      --panel: rgba(12, 18, 35, 0.82);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --text: #f6f1e8;
+      --muted: #c9c0b3;
+      --accent: #d4b063;
+      --accent-soft: #f0d18e;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+      --radius: 24px;
     }
 
     * {
       box-sizing: border-box;
     }
 
-    body {
+    html, body {
       margin: 0;
+      min-height: 100%;
+    }
+
+    body {
       font-family: Georgia, serif;
-      background: radial-gradient(circle at top, #1b2030 0%, var(--bg) 50%, #090b10 100%);
       color: var(--text);
+      background:
+        radial-gradient(circle at top, #1a2347 0%, var(--bg2) 30%, var(--bg) 75%, #06080f 100%);
+      overflow-x: hidden;
     }
 
     a {
@@ -34,7 +41,7 @@
     }
 
     .page-wrap {
-      width: min(1100px, 92%);
+      width: min(980px, 92%);
       margin: 0 auto;
       padding: 2rem 0 3rem;
     }
@@ -45,394 +52,353 @@
       align-items: center;
       gap: 1rem;
       margin-bottom: 2rem;
-    }
-
-    .topbar h1 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
-
-    .mini-link {
       color: var(--muted);
+      font-size: 1.05rem;
     }
 
-    .game-layout {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 1.5rem;
+    .topbar a:hover {
+      color: var(--text);
     }
 
-    .egg-panel {
-      background: rgba(23, 26, 34, 0.65);
-      border-radius: 18px;
-      min-height: 520px;
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(255,255,255,0.07);
+    .hero {
+      text-align: center;
+      margin-bottom: 1.75rem;
     }
 
-    .egg {
-      width: var(--egg-size);
-      height: calc(var(--egg-size) * 1.25);
-      border-radius: 50% 50% 48% 48% / 58% 58% 42% 42%;
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.8rem;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      line-height: 1.1;
+    }
+
+    .hero p {
+      margin: 0.8rem auto 0;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .reveal-card {
       position: relative;
-      background: radial-gradient(circle at 45% 35%, #f0eadc, #bbb3a3 65%, #857d70 100%);
-      box-shadow: inset 0 0 20px rgba(255,255,255,0.25), 0 20px 50px rgba(0,0,0,0.45);
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2.2rem 1.6rem 2rem;
       overflow: hidden;
+      backdrop-filter: blur(8px);
     }
 
-    .yolk {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      position: absolute;
-      top: 34%;
-      left: 50%;
-      transform: translateX(-50%);
-      transition: background 0.35s ease, box-shadow 0.35s ease, transform 0.25s ease;
-    }
-
-    .yolk.gold {
-      background: radial-gradient(circle at 30% 30%, #fff4ba, #e7c542 60%, #b07d14 100%);
-      box-shadow: 0 0 35px rgba(231, 197, 66, 0.65);
-    }
-
-    .yolk.blue {
-      background: radial-gradient(circle at 30% 30%, #d9efff, #7eb4ff 60%, #4169aa 100%);
-      box-shadow: 0 0 35px rgba(126, 180, 255, 0.65);
-    }
-
-    .yolk.green {
-      background: radial-gradient(circle at 30% 30%, #def8d7, #67bb75 60%, #2c7138 100%);
-      box-shadow: 0 0 30px rgba(103, 187, 117, 0.55);
-    }
-
-    .yolk.red {
-      background: radial-gradient(circle at 30% 30%, #ffd4d4, #de6666 60%, #8f2c2c 100%);
-      box-shadow: 0 0 36px rgba(222, 102, 102, 0.6);
-    }
-
-    .yolk.purple {
-      background: radial-gradient(circle at 30% 30%, #f3ddff, #b26dff 60%, #5c2b8e 100%);
-      box-shadow: 0 0 42px rgba(178, 109, 255, 0.7);
-    }
-
-    .yolk.gray {
-      background: radial-gradient(circle at 30% 30%, #eeeeee, #aaaaaa 60%, #666666 100%);
-      box-shadow: 0 0 20px rgba(160, 160, 160, 0.45);
-    }
-
-    .shell-overlay {
+    .reveal-card::before {
+      content: "";
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at center, transparent 0 34%, rgba(30, 35, 44, 0.0) 36%),
-        linear-gradient(to bottom, rgba(12, 13, 20, 0) 0%, rgba(12, 13, 20, 0.35) 100%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
+        radial-gradient(circle at 50% 12%, rgba(255, 231, 178, 0.09), transparent 32%),
+        radial-gradient(circle at 50% 0%, rgba(140, 120, 255, 0.08), transparent 28%);
+      pointer-events: none;
     }
 
-    .eye-mark {
-      width: 34px;
-      height: 20px;
-      border-radius: 50%;
-      position: absolute;
-      top: 28%;
-      left: 57%;
-      background: #111;
-      box-shadow: 0 0 0 4px rgba(255,255,255,0.15);
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .control-panel {
-      background: rgba(23, 26, 34, 0.92);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 18px;
-      padding: 1.5rem;
-    }
-
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.8rem;
-      margin: 1rem 0 1.5rem;
-    }
-
-    button {
-      background: var(--panel-2);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: var(--text);
-      border-radius: 999px;
-      padding: 0.9rem 1.2rem;
-      cursor: pointer;
-      transition: transform 0.15s ease, background 0.15s ease;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-    }
-
-    .primary-action {
-      background: linear-gradient(135deg, var(--accent), #f0d18e);
-      color: #1f1607;
-      font-weight: bold;
-    }
-
-    .small-note,
-    .readout p {
+    .record-label {
+      position: relative;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 0.8rem;
       color: var(--muted);
+      margin-bottom: 1.4rem;
     }
 
-    @media (max-width: 860px) {
-      .game-layout {
+    .creature-stage {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 260px;
+      margin-bottom: 1.25rem;
+    }
+
+    .halo {
+      position: absolute;
+      width: min(340px, 72vw);
+      height: min(340px, 72vw);
+      border-radius: 50%;
+      filter: blur(10px);
+      opacity: 0.9;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      background: radial-gradient(circle, rgba(212,176,99,0.28) 0%, rgba(212,176,99,0.08) 42%, transparent 70%);
+    }
+
+    .creature-symbol {
+      position: relative;
+      z-index: 1;
+      font-size: clamp(5rem, 14vw, 8.5rem);
+      line-height: 1;
+      text-align: center;
+      filter: drop-shadow(0 0 18px rgba(255, 236, 180, 0.18));
+    }
+
+    .creature-name {
+      position: relative;
+      text-align: center;
+      margin: 0.25rem 0 0.5rem;
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.1;
+    }
+
+    .creature-subtitle {
+      text-align: center;
+      color: var(--muted);
+      font-size: 1.02rem;
+      margin-bottom: 1.6rem;
+    }
+
+    .meta-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .meta-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 0.95rem 1rem;
+    }
+
+    .meta-label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.35rem;
+    }
+
+    .meta-value {
+      font-size: 1.05rem;
+    }
+
+    .provenance {
+      background: rgba(255,255,255,0.035);
+      border-left: 3px solid var(--accent);
+      border-radius: 16px;
+      padding: 1.1rem 1.15rem 1.1rem 1.2rem;
+      line-height: 1.75;
+      font-size: 1.06rem;
+    }
+
+    .keeper-note {
+      margin: 1rem 0 0;
+      color: var(--muted);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      justify-content: center;
+      margin-top: 1.8rem;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 0.95rem 1.3rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      font-size: 1rem;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .button.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      color: #1b1407;
+      font-weight: bold;
+      border-color: transparent;
+    }
+
+    .button.primary:hover {
+      background: linear-gradient(135deg, #dfbd72, #f4db9f);
+    }
+
+    .footer-line {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--muted);
+      font-size: 0.98rem;
+      letter-spacing: 0.02em;
+    }
+
+    .dragon .halo {
+      background: radial-gradient(circle, rgba(153, 99, 255, 0.30) 0%, rgba(153, 99, 255, 0.09) 42%, transparent 70%);
+      box-shadow: 0 0 50px rgba(153, 99, 255, 0.18);
+    }
+
+    .dragon .creature-name,
+    .dragon .creature-symbol {
+      text-shadow:
+        0 0 18px rgba(153, 99, 255, 0.18),
+        0 0 30px rgba(153, 99, 255, 0.12);
+    }
+
+    .watcher .halo {
+      background: radial-gradient(circle, rgba(100, 220, 130, 0.24) 0%, rgba(100, 220, 130, 0.08) 42%, transparent 70%);
+    }
+
+    .kit .halo {
+      background: radial-gradient(circle, rgba(120, 180, 255, 0.24) 0%, rgba(120, 180, 255, 0.08) 42%, transparent 70%);
+    }
+
+    .labrilion .halo {
+      background: radial-gradient(circle, rgba(245, 195, 110, 0.28) 0%, rgba(245, 195, 110, 0.08) 42%, transparent 70%);
+    }
+
+    .fox .halo {
+      background: radial-gradient(circle, rgba(255, 160, 110, 0.28) 0%, rgba(255, 160, 110, 0.08) 42%, transparent 70%);
+    }
+
+    @media (max-width: 700px) {
+      .meta-row {
         grid-template-columns: 1fr;
+      }
+
+      .reveal-card {
+        padding: 1.5rem 1rem 1.5rem;
+      }
+
+      .topbar {
+        font-size: 0.98rem;
       }
     }
   </style>
 </head>
 <body>
-<div id="certificateContent">
-  <p>No creature recorded yet.</p>
-</div>
   <main class="page-wrap">
     <header class="topbar">
-      <a href="index.html" class="mini-link">← Home</a>
-      <h1>🐣 Hatchery</h1>
-      <a href="menagerie.html" class="mini-link">Menagerie →</a>
+      <a href="index.html">← Home</a>
+      <a href="hatchery.html">Return to Hatchery →</a>
     </header>
 
-    <section class="game-layout">
-      <div class="egg-panel">
-        <div id="egg" class="egg">
-          <div id="yolk" class="yolk gold"></div>
-          <div id="shellOverlay" class="shell-overlay"></div>
-          <div id="eyeMark" class="eye-mark hidden"></div>
+    <section class="hero">
+      <div class="eyebrow">The Mythic Menagerie</div>
+      <h1>A Creature Has Entered the Menagerie</h1>
+      <p>
+        The shell has fallen away. What follows is not a result, but a beginning.
+      </p>
+    </section>
+
+    <section class="reveal-card" id="revealCard">
+      <div class="record-label">Witnessed</div>
+
+      <div id="certificateContent">
+        <div class="creature-stage">
+          <div class="halo"></div>
+          <div class="creature-symbol">✨</div>
         </div>
+
+        <h2 class="creature-name">No Creature Recorded</h2>
+        <div class="creature-subtitle">The Menagerie is waiting.</div>
+
+        <div class="meta-row">
+          <div class="meta-box">
+            <div class="meta-label">Origin</div>
+            <div class="meta-value">Unwritten</div>
+          </div>
+          <div class="meta-box">
+            <div class="meta-label">State</div>
+            <div class="meta-value">No hatch completed</div>
+          </div>
+        </div>
+
+        <div class="provenance">
+          Enter the Hatchery and complete a session to bring a being into the Menagerie.
+        </div>
+
+        <p class="keeper-note">
+          The Menagerie remembers.
+        </p>
       </div>
 
-      <aside class="control-panel">
-        <h2>Attunement</h2>
-        <p class="small-note">
-          The yolk responds to rhythm, variation, and pressure.
-        </p>
+      <div class="actions">
+        <a class="button primary" href="play.html">Begin Bond</a>
+        <a class="button" href="hatchery.html">Return to Hatchery</a>
+      </div>
 
-        <div class="controls">
-          <button type="button" data-action="gentle">Gentle</button>
-          <button type="button" data-action="vary">Vary</button>
-          <button type="button" data-action="repeat">Repeat</button>
-          <button type="button" data-action="chaos">Chaos</button>
-          <button type="button" id="hatchBtn" class="primary-action">Complete Hatchery Session</button>
-        </div>
-
-        <div class="readout">
-          <p><strong>State:</strong> <span id="stateLabel">Growth</span></p>
-          <p><strong>Color Path:</strong> <span id="pathLabel">gold</span></p>
-          <p><strong>Variation:</strong> <span id="variationValue">0</span></p>
-          <p><strong>Repetition:</strong> <span id="repetitionValue">0</span></p>
-          <p><strong>Stress:</strong> <span id="stressValue">0</span></p>
-        </div>
-      </aside>
+      <div class="footer-line">The Menagerie’s memory is long.</div>
     </section>
   </main>
 
   <script>
-    const yolk = document.getElementById("yolk");
-    const shellOverlay = document.getElementById("shellOverlay");
-    const eyeMark = document.getElementById("eyeMark");
+    const container = document.getElementById("certificateContent");
+    const card = document.getElementById("revealCard");
+    const saved = localStorage.getItem("latestCreature");
 
-    const stateLabel = document.getElementById("stateLabel");
-    const pathLabel = document.getElementById("pathLabel");
-    const variationValue = document.getElementById("variationValue");
-    const repetitionValue = document.getElementById("repetitionValue");
-    const stressValue = document.getElementById("stressValue");
-    const hatchBtn = document.getElementById("hatchBtn");
+    function getCreatureClass(name) {
+      const lower = name.toLowerCase();
 
-    const state = {
-      variation: 0,
-      repetition: 0,
-      stress: 0,
-      calm: 0,
-      history: ["gold"],
-      currentColor: "gold"
-    };
-
-    const buttons = document.querySelectorAll("[data-action]");
-
-    buttons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const action = btn.dataset.action;
-        applyAction(action);
-        renderState();
-      });
-    });
-
-    hatchBtn.addEventListener("click", completeSession);
-
-    function applyAction(action) {
-      if (action === "gentle") {
-        state.calm += 2;
-        state.stress = Math.max(0, state.stress - 1);
-        state.variation += 1;
-      }
-
-      if (action === "vary") {
-        state.variation += 2;
-        state.calm += 1;
-      }
-
-      if (action === "repeat") {
-        state.repetition += 2;
-        state.variation = Math.max(0, state.variation - 1);
-      }
-
-      if (action === "chaos") {
-        state.stress += 2;
-        state.variation += 1;
-        state.calm = Math.max(0, state.calm - 1);
-      }
-
-      state.currentColor = determineColor();
-      state.history.push(state.currentColor);
-
-      if (state.history.length > 12) {
-        state.history.shift();
-      }
+      if (lower.includes("dragon")) return "dragon";
+      if (lower.includes("watcher")) return "watcher";
+      if (lower.includes("kit")) return "kit";
+      if (lower.includes("labrilion")) return "labrilion";
+      if (lower.includes("fox")) return "fox";
+      return "";
     }
 
-    function determineColor() {
-      if (state.repetition >= 6) return "green";
-      if (state.stress >= 6) return "red";
-      if (state.variation >= 7 && state.calm >= 5) return "purple";
-      if (state.calm >= 5 && state.variation >= 4) return "blue";
-      return "gold";
+    if (saved) {
+      const creature = JSON.parse(saved);
+      const creatureClass = getCreatureClass(creature.name);
+
+      if (creatureClass) {
+        card.classList.add(creatureClass);
+      }
+
+      container.innerHTML = `
+        <div class="creature-stage">
+          <div class="halo"></div>
+          <div class="creature-symbol">${creature.symbol}</div>
+        </div>
+
+        <h2 class="creature-name">${creature.name}</h2>
+        <div class="creature-subtitle">Recorded in the Menagerie</div>
+
+        <div class="meta-row">
+          <div class="meta-box">
+            <div class="meta-label">Origin</div>
+            <div class="meta-value">${creature.origin}</div>
+          </div>
+          <div class="meta-box">
+            <div class="meta-label">State</div>
+            <div class="meta-value">Born</div>
+          </div>
+        </div>
+
+        <div class="provenance">
+          ${creature.text}
+        </div>
+
+        <p class="keeper-note">
+          The Menagerie remembers.
+        </p>
+      `;
     }
-
-    function renderState() {
-      variationValue.textContent = state.variation;
-      repetitionValue.textContent = state.repetition;
-      stressValue.textContent = state.stress;
-      pathLabel.textContent = state.history.join(" → ");
-
-      yolk.className = "yolk " + state.currentColor;
-
-      eyeMark.classList.add("hidden");
-      shellOverlay.style.opacity = "0";
-
-      if (state.currentColor === "gold") {
-        stateLabel.textContent = "Growth";
-      }
-
-      if (state.currentColor === "blue") {
-        stateLabel.textContent = "Attunement";
-      }
-
-      if (state.currentColor === "green") {
-        stateLabel.textContent = "Stability / Repetition";
-        shellOverlay.style.opacity = "0.45";
-        if (state.repetition >= 8) {
-          eyeMark.classList.remove("hidden");
-        }
-      }
-
-      if (state.currentColor === "red") {
-        stateLabel.textContent = "Stress";
-      }
-
-      if (state.currentColor === "purple") {
-        stateLabel.textContent = "Emergence";
-      }
-    }
-
-    function determineCreature() {
-      const greenCount = state.history.filter(c => c === "green").length;
-      const purpleCount = state.history.filter(c => c === "purple").length;
-      const blueCount = state.history.filter(c => c === "blue").length;
-      const goldCount = state.history.filter(c => c === "gold").length;
-
-      if (greenCount >= 4 || state.repetition >= 8) {
-        return {
-          name: "Watcher",
-          symbol: "🪰",
-          origin: "Repetition",
-          text: "Born of routine, this creature learned not to reach—but to remain."
-        };
-      }
-
-      if (purpleCount >= 1 && state.variation >= 4 && state.calm >= 3 && purpleCount < 3) {
-        return {
-          name: "Kit",
-          symbol: "🐣",
-          origin: "Learning Variation",
-          text: "This creature formed where change was welcomed, but not yet held long enough for full emergence."
-        };
-      }
-
-      if (blueCount >= 2 && goldCount >= 2 && state.calm >= 5 && state.variation >= 5 && purpleCount === 0) {
-        return {
-          name: "Labrilion",
-          symbol: "🦁",
-          origin: "Refined Mastery",
-          text: "Steady, warm, and balanced, this creature formed where change was welcomed without being chased."
-        };
-      }
-
-      if (blueCount >= 2 && goldCount >= 2 && state.variation >= 7) {
-        return {
-          name: "Fox Creature",
-          symbol: "🦊",
-          origin: "Expressive Variation",
-          text: "Colorful and bright, with fur, wings, and a scaled belly, this creature formed through playful diversity."
-        };
-      }
-
-      if (purpleCount >= 3 && state.variation >= 7 && state.calm >= 5) {
-        return {
-          name: "Dragon",
-          symbol: "🐉",
-          origin: "Successful Emergence",
-          text: "This creature emerged through variation, persistence, and coherence strong enough to hold becoming."
-        };
-      }
-
-      return {
-        name: "Unformed Echo",
-        symbol: "✨",
-        origin: "Partial Session",
-        text: "Something stirred here, but did not yet settle into a known form."
-      };
-    }
-
-    function completeSession() {
-      const creature = determineCreature();
-      localStorage.setItem("latestCreature", JSON.stringify(creature));
-      window.location.href = "menagerie.html";
-    }
-
-    renderState();
   </script>
-  <script>
-const container = document.getElementById("certificateContent");
-const saved = localStorage.getItem("latestCreature");
-;
-}
-</script>
-<script>
-const container = document.getElementById("certificateContent");
-const saved = localStorage.getItem("latestCreature");
-
-if (saved) {
-  const creature = JSON.parse(saved);
-
-  container.innerHTML = `
-    <h2>${creature.symbol} ${creature.name}</h2>
-    <p><strong>Origin:</strong> ${creature.origin}</p>
-    <p>${creature.text}</p>
-    <p><em>The Menagerie remembers.</em></p>
-  `;
-}
-</script>
 </body>
 </html>
