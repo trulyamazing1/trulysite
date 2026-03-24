@@ -1,3 +1,5 @@
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -191,9 +193,6 @@
   </style>
 </head>
 <body>
-<div id="certificateContent">
-  <p>No creature recorded yet.</p>
-</div>
   <main class="page-wrap">
     <header class="topbar">
       <a href="index.html" class="mini-link">← Home</a>
@@ -413,16 +412,7 @@
   <script>
 const container = document.getElementById("certificateContent");
 const saved = localStorage.getItem("latestCreature");
-
-if (saved) {
-  const creature = JSON.parse(saved);
-
-  container.innerHTML = `
-    <h2>${creature.symbol} ${creature.name}</h2>
-    <p><strong>Origin:</strong> ${creature.origin}</p>
-    <p>${creature.text}</p>
-    <p><em>The Menagerie remembers.</em></p>
-  `;
+;
 }
 </script>
 </body>
