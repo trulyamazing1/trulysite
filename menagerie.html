@@ -418,10 +418,10 @@
         <div class="button-row">
           <button class="primary" id="speakBtn">Speak to It</button>
           <button class="secondary" id="touchBtn">Touch the Egg</button>
-          <button class="secondary" onclick="careBed()">Bed</button>
-          <button class="secondary" onclick="careBath()">Bath</button>
-          <button class="secondary" onclick="careSocial()">Socialize</button>
-          <button class="secondary" onclick="careFeed()">Feed</button>
+          <button class="secondary" id="bedBtn">Bed</button>
+          <button class="secondary" id="bathBtn">Bath</button>
+          <button class="secondary" id="socialBtn">Socialize</button>
+          <button class="secondary" id="feedBtn">Feed</button>
         </div>
       </section>
 
@@ -477,6 +477,10 @@
       seedInput: document.getElementById('seedInput'),
       speakBtn: document.getElementById('speakBtn'),
       touchBtn: document.getElementById('touchBtn'),
+      bedBtn: document.getElementById('bedBtn'),
+      bathBtn: document.getElementById('bathBtn'),
+      socialBtn: document.getElementById('socialBtn'),
+      feedBtn: document.getElementById('feedBtn'),
       statusBox: document.getElementById('statusBox'),
       seedLog: document.getElementById('seedLog'),
       eggWrap: document.getElementById('eggWrap'),
@@ -667,6 +671,10 @@
 
     el.speakBtn.addEventListener('click', speakToYolk);
     el.touchBtn.addEventListener('click', reactToTouch);
+    el.bedBtn.addEventListener('click', careBed);
+    el.bathBtn.addEventListener('click', careBath);
+    el.socialBtn.addEventListener('click', careSocial);
+    el.feedBtn.addEventListener('click', careFeed);
     el.eggWrap.addEventListener('click', reactToTouch);
 
     renderHoard();
