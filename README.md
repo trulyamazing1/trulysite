@@ -1,8 +1,8 @@
-# 🐉 Binary Garden
+# 🐉 Hatchery; Mythic Menagerie
 
-[🌿 Enter the Garden](./garden.html)
+[🌿 Enter the Hatchery](./hatchery.html)
 
-🐲 Meet a dragon in the Binary Garden
+🐲 Meet a creature in the Mythic Menagerie
 
 <p align="left center">
   <img src="DragonGuard.gif" width="300">
@@ -14,7 +14,7 @@
 
 🌱 What this is
 
-Binary Garden is a playable experiment.
+Hatchery; Mythic Menagerie is a playable experiment.
 
 It looks simple.
 
@@ -28,7 +28,7 @@ But underneath, it explores:
 
 What you carry forward matters.
 
-This is not a game about winning.
+This is not a game about winning. It is about developing a creature.
 
 It is a space for:
 
@@ -38,7 +38,7 @@ It is a space for:
   
 🐉 Related System: Dragon Ring
 
-Binary Garden is part of a larger system called Dragon Ring.
+The Mythic Menagerie is part of a larger system called Dragon Ring.
 
 A learning environment where:
 
@@ -60,7 +60,7 @@ No frameworks. No backend. Just interaction.
 
 🌐 Live Site
 
-Visit the Garden
+Visit the Hatchery
 
 🌿 Notes
 
