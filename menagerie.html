@@ -349,7 +349,6 @@
     button:hover { transform: translateY(-1px); }
     button:active { transform: translateY(1px); }
     button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
-    
 
     .status-box { min-height: 74px; display: flex; align-items: center; color: var(--muted); line-height: 1.55; }
 
@@ -419,7 +418,10 @@
         <div class="button-row">
           <button class="primary" id="speakBtn">Speak to It</button>
           <button class="secondary" id="touchBtn">Touch the Egg</button>
-          
+          <button class="secondary" onclick="careBed()">Bed</button>
+          <button class="secondary" onclick="careBath()">Bath</button>
+          <button class="secondary" onclick="careSocial()">Socialize</button>
+          <button class="secondary" onclick="careFeed()">Feed</button>
         </div>
       </section>
 
