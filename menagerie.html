@@ -14,17 +14,14 @@
       --muted: #c9bc95;
       --gold: #ffd76a;
       --amber: #ffb347;
-      --deep-gold: #d99c1f;
       --cheek: rgba(255, 180, 140, 0.45);
-      --soft-red: rgba(255, 90, 90, 0.18);
-      --blue: rgba(120, 170, 255, 0.18);
       --shadow: 0 24px 80px rgba(0,0,0,0.55);
       --radius: 24px;
       --pulse-duration: 6s;
       --glow-alpha: 0.55;
       --eye-scale: 0.18;
       --eye-opacity: 0.15;
-      --cheek-opacity: 0.0;
+      --cheek-opacity: 0;
       --pupil-offset-x: 0px;
       --pupil-offset-y: 0px;
       --shell-flicker: 0.1;
@@ -180,16 +177,6 @@
       mix-blend-mode: screen;
     }
 
-    .egg::after {
-      content: "";
-      position: absolute;
-      inset: -30% -20%;
-      background:
-        conic-gradient(from 90deg, transparent 0 18%, rgba(255,255,255,0.07) 20%, transparent 28%, rgba(255,255,255,0.05) 34%, transparent 52%, rgba(255,255,255,0.06) 58%, transparent 100%);
-      opacity: 0.32;
-      animation: shimmer 14s linear infinite;
-    }
-
     .face {
       position: absolute;
       left: 50%;
@@ -209,7 +196,6 @@
       opacity: var(--eye-opacity);
       transform: scale(var(--eye-scale));
       transition: transform 300ms ease, opacity 300ms ease, left 300ms ease, top 300ms ease;
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.04);
     }
 
     .eye.left { left: calc(26px + var(--pupil-offset-x)); top: calc(28px + var(--pupil-offset-y)); }
@@ -308,23 +294,45 @@
     .resource-value { font-size: 1.55rem; font-weight: 600; }
 
     .meter {
-      width: 100%; height: 10px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; margin-top: 12px;
+      width: 100%;
+      height: 10px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 12px;
     }
 
     .meter > span {
-      display: block; height: 100%; width: 0%; border-radius: inherit; background: linear-gradient(90deg, rgba(255,179,71,0.45), rgba(255,215,106,0.95)); transition: width 350ms ease;
+      display: block;
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(255,179,71,0.45), rgba(255,215,106,0.95));
+      transition: width 350ms ease;
     }
 
     .hoard-grid {
-      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
     }
 
     .hoard-item {
-      width: 100%; text-align: left; padding: 14px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.03); color: var(--text); cursor: pointer; transition: transform 120ms ease, border-color 120ms ease, background 120ms ease; font: inherit;
+      width: 100%;
+      text-align: left;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      cursor: pointer;
+      transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+      font: inherit;
     }
 
     .hoard-item:hover { transform: translateY(-1px); border-color: rgba(255,215,106,0.4); background: rgba(255,215,106,0.05); }
-    .hoard-item.selected { border-color: rgba(255,215,106,0.65); background: rgba(255,215,106,0.12); box-shadow: inset 0 0 0 1px rgba(255,215,106,0.14); }
+    .hoard-item.selected { border-color: rgba(255,215,106,0.65); background: rgba(255,215,106,0.12); }
     .hoard-item.used { opacity: 0.38; cursor: not-allowed; filter: grayscale(0.3); }
 
     .hoard-name { display: block; font-size: 0.98rem; margin-bottom: 4px; }
@@ -333,25 +341,37 @@
     label { display: block; margin-bottom: 8px; font-size: 0.95rem; }
 
     textarea {
-      width: 100%; min-height: 130px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.2); color: var(--text); padding: 14px; resize: vertical; font: inherit; line-height: 1.5; outline: none;
+      width: 100%;
+      min-height: 130px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.2);
+      color: var(--text);
+      padding: 14px;
+      resize: vertical;
+      font: inherit;
+      line-height: 1.5;
+      outline: none;
     }
 
     textarea:focus { border-color: rgba(255,215,106,0.46); box-shadow: 0 0 0 3px rgba(255,215,106,0.08); }
-
     .button-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
 
     button.primary, button.secondary {
-      border: 0; border-radius: 999px; padding: 12px 18px; font: inherit; cursor: pointer; transition: transform 120ms ease, opacity 120ms ease, box-shadow 140ms ease;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 120ms ease, opacity 120ms ease, box-shadow 140ms ease;
     }
 
     button.primary { color: #241400; background: linear-gradient(180deg, #ffe39a, #ffbd54); box-shadow: 0 10px 20px rgba(255,189,84,0.22); font-weight: 600; }
     button.secondary { color: var(--text); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); }
     button:hover { transform: translateY(-1px); }
     button:active { transform: translateY(1px); }
-    button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
 
     .status-box { min-height: 74px; display: flex; align-items: center; color: var(--muted); line-height: 1.55; }
-
     .seed-log { display: grid; gap: 10px; max-height: 220px; overflow: auto; padding-right: 4px; }
     .seed-entry { padding: 12px 14px; border-radius: 14px; background: rgba(0,0,0,0.18); border: 1px solid rgba(255,255,255,0.08); }
     .seed-entry strong { display: block; margin-bottom: 5px; font-weight: 600; color: var(--text); }
@@ -360,7 +380,6 @@
 
     @keyframes eggBreath { 0%, 100% { transform: scale(0.985); } 50% { transform: scale(1.03); } }
     @keyframes haloBreath { 0%, 100% { transform: scale(0.92); opacity: 0.68; } 50% { transform: scale(1.06); opacity: 0.96; } }
-    @keyframes shimmer { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @keyframes driftDust { from { transform: translateY(0px); } 50% { transform: translateY(-8px); } to { transform: translateY(0px); } }
 
     @media (max-width: 980px) {
@@ -377,8 +396,9 @@
       <div class="stage-copy">
         <div class="eyebrow">Incubator Hatchery • Mythic Menagerie</div>
         <h1>You have been given a chance to raise a dragon egg.</h1>
-        <p class="lede">It is not empty. It is becoming. It cannot speak yet, but it can receive. The yolk learns the way any small creature would: by sensing edges, testing boundaries, and gathering the world in uncertain, curious fragments.</p>
+        <p class="lede">It is not empty. It is becoming. It cannot speak yet, but it can receive. The yolk learns by sensing edges, testing boundaries, and gathering the world in uncertain, curious fragments.</p>
       </div>
+
       <div class="creature-zone">
         <div class="halo"></div>
         <div class="base-ring"></div>
@@ -395,6 +415,7 @@
           </div>
         </div>
       </div>
+
       <div class="stage-footer">
         <div class="tag">🫧 <span id="phaseLabel">Yolk Phase</span></div>
         <div class="tag">🌱 <span id="seedLabel">Words Remaining: 3</span></div>
@@ -431,7 +452,7 @@
           <div class="resource"><div class="resource-label">Curiosity</div><div class="resource-value" id="curiosityValue">12%</div><div class="meter"><span id="curiosityMeter"></span></div></div>
           <div class="resource"><div class="resource-label">Trust</div><div class="resource-value" id="trustValue">8%</div><div class="meter"><span id="trustMeter"></span></div></div>
           <div class="resource"><div class="resource-label">Coherence</div><div class="resource-value" id="coherenceValue">10%</div><div class="meter"><span id="coherenceMeter"></span></div></div>
-          <div class="resource"><div class="resource-label">Hatch Readiness</div><div class="resource-value" id="hatchValue">0%</div><div class="meter"><span id="hatchMeter"></span></div></div>
+          <div class="resource"><div class="resource-label">Becoming</div><div class="resource-value" id="hatchValue">10%</div><div class="meter"><span id="hatchMeter"></span></div></div>
         </div>
       </section>
 
@@ -463,7 +484,7 @@
       curiosity: 0.12,
       trust: 0.08,
       coherence: 0.10,
-      hatch: 0.0,
+      hatch: 0.10,
       selectedHoard: null,
       usedHoard: new Set(),
       log: [],
@@ -521,11 +542,19 @@
     }
 
     function updateMeters() {
-      state.hatch = clamp((state.curiosity * 0.35) + (state.trust * 0.35) + (state.coherence * 0.30), 0, 1);
+      state.hatch = clamp(
+        (state.curiosity * 0.35) +
+        (state.trust * 0.35) +
+        (state.coherence * 0.30),
+        0,
+        1
+      );
+
       el.curiosityValue.textContent = percent(state.curiosity);
       el.trustValue.textContent = percent(state.trust);
       el.coherenceValue.textContent = percent(state.coherence);
       el.hatchValue.textContent = percent(state.hatch);
+
       el.curiosityMeter.style.width = percent(state.curiosity);
       el.trustMeter.style.width = percent(state.trust);
       el.coherenceMeter.style.width = percent(state.coherence);
@@ -565,7 +594,9 @@
       el.seedLog.prepend(entry);
     }
 
-    function setStatus(text) { el.statusBox.textContent = text; }
+    function setStatus(text) {
+      el.statusBox.textContent = text;
+    }
 
     function blink() {
       el.face.classList.add('blink-now');
@@ -593,14 +624,8 @@
     function reactToTouch() {
       state.curiosity = clamp(state.curiosity + 0.02, 0, 1);
       state.coherence = clamp(state.coherence + 0.01, 0, 1);
-      const lines = [
-        'It leans into the touch in the smallest way, as if testing whether the world can be gentle.',
-        'A faint pulse answers your touch. Not speech. Recognition of pressure, perhaps.',
-        'Something inside shifts toward you, curious and cautious all at once.'
-      ];
       nudgeEyes((Math.random() - 0.5) * 4, (Math.random() - 0.5) * 2);
-      if (state.curiosity > 0.24 && Math.random() > 0.55) blink();
-      setStatus(lines[Math.floor(Math.random() * lines.length)]);
+      setStatus('A faint pulse answers your touch. Not speech. Recognition of pressure, perhaps.');
       updateMeters();
     }
 
@@ -630,12 +655,13 @@
         return;
       }
       if (state.chatSeeds <= 0) {
-        setStatus('No chat seeds remain just now. The egg is full for the moment. Let it rest.');
+        setStatus('No words remain just now. The egg is full for the moment. Let it rest.');
         return;
       }
 
       const reading = analyzeSpeech(text);
       const offering = hoardItems.find(item => item.id === state.selectedHoard);
+
       state.chatSeeds -= 1;
       state.usedHoard.add(state.selectedHoard);
       state.log.push({ text, offering: offering.name, reading });
@@ -643,30 +669,45 @@
       state.curiosity = clamp(state.curiosity + 0.05 + (reading.curiosity * 0.12), 0, 1);
       state.trust = clamp(state.trust + 0.03 + (reading.warmth * 0.14), 0, 1);
       state.coherence = clamp(state.coherence + 0.04 + ((1 - reading.intensity) * 0.07), 0, 1);
-      if (reading.intensity > 0.45) state.coherence = clamp(state.coherence - 0.02, 0, 1);
+      if (reading.intensity > 0.45) {
+        state.coherence = clamp(state.coherence - 0.02, 0, 1);
+      }
 
       addLog(`You released ${offering.name}`, `“${text.length > 130 ? text.slice(0, 130) + '…' : text}”`);
-
-      const reactions = [];
-      if (reading.warmth > 0.22) reactions.push('The cheeks warm faintly, as though it has discovered comfort before language.');
-      if (reading.curiosity > 0.22) reactions.push('The tiny pupils gather themselves more clearly. Something in it reached toward the unknown.');
-      if (reading.intensity > 0.35) reactions.push('The shell flickers with uncertainty, but it does not turn away. Even sharp things teach shape.');
-      if (reactions.length === 0) reactions.push('It holds onto your words in silence. Something changed, even if you cannot yet name how.');
-
-      setStatus(reactions[Math.floor(Math.random() * reactions.length)]);
-      if (reading.warmth > 0.18) nudgeEyes(1, 0);
-      if (reading.curiosity > 0.15) nudgeEyes((Math.random() > 0.5 ? 2 : -2), 1);
-      if (state.curiosity > 0.3 && Math.random() > 0.35) blink();
-
+      setStatus('It holds onto your words in silence. Something changed, even if you cannot yet name how.');
       el.seedInput.value = '';
       state.selectedHoard = null;
       el.selectedHoardText.textContent = 'No hoard offering selected yet.';
       renderHoard();
       updateMeters();
+    }
 
-      if (state.hatch >= 0.75) {
-        setStatus('Its eyes are no longer only imagined. The yolk has begun to recognize you. It is nearing a first true becoming.');
-      }
+    function careBed() {
+      state.trust = clamp(state.trust + 0.05, 0, 1);
+      state.coherence = clamp(state.coherence + 0.04, 0, 1);
+      setStatus('You soften the space around it. The egg settles. It feels held.');
+      updateMeters();
+    }
+
+    function careBath() {
+      state.coherence = clamp(state.coherence + 0.06, 0, 1);
+      state.curiosity = clamp(state.curiosity + 0.02, 0, 1);
+      setStatus('You clear what clings to it. The surface brightens. It feels more itself.');
+      updateMeters();
+    }
+
+    function careSocial() {
+      state.curiosity = clamp(state.curiosity + 0.05, 0, 1);
+      state.trust = clamp(state.trust + 0.03, 0, 1);
+      setStatus('You move, and it tries to follow. Not perfectly. But with intent.');
+      updateMeters();
+    }
+
+    function careFeed() {
+      state.curiosity = clamp(state.curiosity + 0.06, 0, 1);
+      state.coherence = clamp(state.coherence + 0.03, 0, 1);
+      setStatus('It takes in what you offer. Something in it grows outward.');
+      updateMeters();
     }
 
     el.speakBtn.addEventListener('click', speakToYolk);
@@ -681,55 +722,6 @@
     updateMeters();
     queueBlink();
     addLog('The egg was placed in your care', 'It cannot answer yet. But it can receive, remember, and become.');
-
-// =========================
-// 🐉 BED BATH & BEYOND LAYER
-// =========================
-
-function careBed() {
-  state.trust = clamp(state.trust + 0.05, 0, 1);
-  state.coherence = clamp(state.coherence + 0.04, 0, 1);
-  setStatus("You soften the space around it. The egg settles. It feels held.");
-  updateMeters();
-}
-
-function careBath() {
-  state.coherence = clamp(state.coherence + 0.06, 0, 1);
-  state.curiosity = clamp(state.curiosity + 0.02, 0, 1);
-  setStatus("You clear what clings to it. The surface brightens. It feels more itself.");
-  updateMeters();
-}
-
-function careSocial() {
-  state.curiosity = clamp(state.curiosity + 0.05, 0, 1);
-  state.trust = clamp(state.trust + 0.03, 0, 1);
-  setStatus("You move, and it tries to follow. Not perfectly. But with intent.");
-  updateMeters();
-}
-
-function careFeed() {
-  state.curiosity = clamp(state.curiosity + 0.06, 0, 1);
-  state.coherence = clamp(state.coherence + 0.03, 0, 1);
-  setStatus("It takes in what you offer. Something in it grows outward.");
-  updateMeters();
-}
-
-function checkContentment() {
-  const content = (
-    state.coherence > 0.6 &&
-    state.trust > 0.6 &&
-    state.curiosity < 0.6
-  );
-
-  if (content) {
-    state.coherence = clamp(state.coherence + 0.02, 0, 1);
-    setStatus("Nothing is required. It rests. The shape holds.");
-  }
-}
-
-// hook into update cycle
-const originalUpdate = updateMeters;
-updateMeters = function() {
-  originalUpdate();
-  checkContentment();
-};
+  </script>
+</body>
+</html>
