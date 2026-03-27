@@ -566,7 +566,7 @@ function triggerFirstCrack() {
       });
     }
 
-    function updateMeters() {
+  function updateMeters() {
   state.hatch = clamp(
     (state.curiosity * 0.35) +
     (state.trust * 0.35) +
@@ -578,6 +578,17 @@ function triggerFirstCrack() {
   if (state.hatch >= 0.98 && !state.hasCracked) {
     triggerFirstCrack();
   }
+
+  el.curiosityValue.textContent = percent(state.curiosity);
+  el.trustValue.textContent = percent(state.trust);
+  el.coherenceValue.textContent = percent(state.coherence);
+  el.hatchValue.textContent = percent(state.hatch);
+
+  el.curiosityMeter.style.width = percent(state.curiosity);
+  el.trustMeter.style.width = percent(state.trust);
+  el.coherenceMeter.style.width = percent(state.coherence);
+  el.hatchMeter.style.width = percent(state.hatch);
+}
 
       el.curiosityValue.textContent = percent(state.curiosity);
       el.trustValue.textContent = percent(state.trust);
