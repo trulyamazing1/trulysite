@@ -574,6 +574,10 @@
       el.root.style.setProperty('--eye-scale', eyeScale.toFixed(2));
       el.root.style.setProperty('--eye-opacity', eyeOpacity.toFixed(2));
       el.root.style.setProperty('--cheek-opacity', cheekOpacity.toFixed(2));
+      const mouth = document.querySelector('.mouth');
+if (mouth) {
+  mouth.style.opacity = state.hatch >= 0.95 ? '0.85' : '0';
+}
       el.root.style.setProperty('--glow-alpha', glowAlpha.toFixed(2));
       el.root.style.setProperty('--pulse-duration', `${pulseDuration.toFixed(2)}s`);
       el.root.style.setProperty('--shell-flicker', shellFlicker.toFixed(2));
