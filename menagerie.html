@@ -521,6 +521,7 @@
       addLog("The shell shifted", "Not a break. A beginning.");
     }
 
+    document.addEventListener('mousemove', trackEyes);
     function renderHoard() {
       el.hoardGrid.innerHTML = '';
       hoardItems.forEach(item => {
