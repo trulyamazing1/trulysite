@@ -1,0 +1,362 @@
+<!-- /board_ui.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fog Board UI (MVP)</title>
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --panel: rgba(255,255,255,0.06);
+      --line: rgba(255,255,255,0.12);
+      --text: #f2f2f2;
+      --muted: rgba(242,242,242,0.7);
+      --accent: #d9b45b;
+      --danger: #ff6b6b;
+      --ok: #7ee787;
+      --node: rgba(255,255,255,0.65);
+      --hidden: rgba(255,255,255,0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(circle at top, rgba(217,180,91,0.15), transparent 40%), var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      width: min(1200px, 95vw);
+      margin: 20px auto 40px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .board {
+      padding: 12px;
+      min-height: 720px;
+      display: grid;
+      place-items: center;
+    }
+
+    .sidebar {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+      min-height: 720px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0.02em;
+    }
+
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: var(--muted);
+      font-size: 12px;
+      background: rgba(0,0,0,0.2);
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.12s ease;
+      font: inherit;
+    }
+    button:hover { transform: translateY(-1px); background: rgba(255,255,255,0.09); }
+    button:active { transform: translateY(0px); }
+
+    .primary { border-color: rgba(217,180,91,0.35); background: rgba(217,180,91,0.12); }
+    .danger { border-color: rgba(255,107,107,0.35); background: rgba(255,107,107,0.10); }
+    .ok { border-color: rgba(126,231,135,0.35); background: rgba(126,231,135,0.10); }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+    .log {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(0,0,0,0.22);
+      color: var(--muted);
+      font-size: 12px;
+      min-height: 90px;
+      white-space: pre-wrap;
+    }
+
+    .err {
+      border-color: rgba(255,107,107,0.5);
+      background: rgba(255,107,107,0.08);
+      color: rgba(255,220,220,0.95);
+    }
+
+    svg { width: 100%; height: 100%; max-width: 900px; max-height: 680px; }
+    .hint { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="panel board">
+      <svg id="svg" viewBox="-480 -360 960 720" aria-label="Fog board"></svg>
+    </section>
+
+    <aside class="panel sidebar">
+      <div class="row" style="justify-content: space-between;">
+        <h1>Fog Board UI (MVP)</h1>
+        <a class="pill" href="./hatchery.html">← Hatchery</a>
+      </div>
+
+      <div class="row">
+        <span class="pill" id="pState">state: …</span>
+        <span class="pill" id="pPos">pos: …</span>
+        <span class="pill" id="pVis">visR: …</span>
+      </div>
+      <div class="row">
+        <span class="pill" id="pVisible">visible: …</span>
+        <span class="pill" id="pStabilized">stabilized: …</span>
+        <span class="pill" id="pMarkers">markers: …</span>
+      </div>
+
+      <div class="grid2">
+        <button class="primary" id="placeBtn" type="button">PLACE marker</button>
+        <button id="resetBtn" class="danger" type="button">RESET board</button>
+      </div>
+
+      <div class="grid2">
+        <button id="pauseBtn" type="button">PAUSE</button>
+        <button id="resumeBtn" type="button">RESUME</button>
+      </div>
+
+      <div class="hint">
+        MOVE requires: adjacent + currently visible. PLACE requires: visible node (default: your position).
+        PAUSE is legal, has no penalty, and does not grow visibility.
+      </div>
+
+      <div class="grid3">
+        <button id="nw" type="button">NW</button>
+        <button id="ne" type="button">NE</button>
+        <button id="e" type="button">E</button>
+        <button id="w" type="button">W</button>
+        <button id="sw" type="button">SW</button>
+        <button id="se" type="button">SE</button>
+      </div>
+
+      <div class="log" id="log">Ready.</div>
+    </aside>
+  </div>
+
+  <script type="module">
+    "use strict";
+
+    import { BoardEngine } from "./board_engine.js";
+
+    /** @type {BoardEngine} */
+    let engine = makeEngine();
+
+    const $ = (id) => {
+      const el = document.getElementById(id);
+      if (!el) throw new Error(`Missing element: ${id}`);
+      return el;
+    };
+
+    const svg = $("svg");
+    const logBox = $("log");
+
+    const pState = $("pState");
+    const pPos = $("pPos");
+    const pVis = $("pVis");
+    const pVisible = $("pVisible");
+    const pStabilized = $("pStabilized");
+    const pMarkers = $("pMarkers");
+
+    $("placeBtn").addEventListener("click", () => safeAct(() => engine.placeMarker(), "PLACE"));
+    $("resetBtn").addEventListener("click", () => {
+      engine = makeEngine();
+      writeLog("RESET: fresh board.", false);
+      render();
+    });
+
+    $("pauseBtn").addEventListener("click", () => safeAct(() => engine.pause(), "PAUSE"));
+    $("resumeBtn").addEventListener("click", () => safeAct(() => engine.resume(), "RESUME"));
+
+    ["e","w","ne","nw","se","sw"].forEach((dir) => {
+      $(dir).addEventListener("click", () => safeAct(() => engine.moveDir({ dir }), `MOVE ${dir.toUpperCase()}`));
+    });
+
+    function makeEngine() {
+      return new BoardEngine({
+        config: { boardRadius: 6, moveVisibilityGrowth: 1, markerStabilizeRadius: 2 },
+      });
+    }
+
+    function writeLog(text, isError) {
+      logBox.textContent = text;
+      logBox.classList.toggle("err", Boolean(isError));
+    }
+
+    function safeAct(fn, label) {
+      try {
+        fn();
+        writeLog(`${label} OK`, false);
+        render();
+      } catch (e) {
+        writeLog(`${label} FAIL: ${e?.message ?? String(e)}`, true);
+      }
+    }
+
+    // Axial -> pixel projection (hex-axial style; works for your 6-neighbor lattice)
+    const SQRT3 = Math.sqrt(3);
+    const SIZE = 34; // node spacing
+    function axialToXY([q, r]) {
+      // pointy-top axial projection
+      const x = SIZE * (SQRT3 * q + (SQRT3 / 2) * r);
+      const y = SIZE * (1.5 * r);
+      return [x, y];
+    }
+
+    function render() {
+      // HUD
+      const ps = engine.playerSnapshot();
+      pState.textContent = `state: ${ps.state}`;
+      pPos.textContent = `pos: (${ps.position[0]},${ps.position[1]})`;
+      pVis.textContent = `visR: ${ps.visibilityRadius}`;
+
+      const visible = engine.visibleNodes();
+      const stabilized = engine.stabilizedNodes();
+      const markers = engine.markerSnapshot();
+
+      pVisible.textContent = `visible: ${visible.length}`;
+      pStabilized.textContent = `stabilized: ${stabilized.length}`;
+      pMarkers.textContent = `markers: ${markers.length}`;
+
+      // Build fast lookup sets
+      const visSet = new Set(visible.map((c) => `${c[0]},${c[1]}`));
+      const stabSet = new Set(stabilized.map((c) => `${c[0]},${c[1]}`));
+      const markerSet = new Set(markers.map((m) => `${m.position[0]},${m.position[1]}`));
+
+      // Clear SVG
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+      // Draw nodes (iterate all engine nodes via engine.nodeView over bounds)
+      // Engine doesn't export all coords directly; we can infer by scanning a square and checking bounds.
+      const R = 6;
+      const coords = [];
+      for (let q = -R; q <= R; q++) {
+        for (let r = -R; r <= R; r++) {
+          // inBounds isn't exposed; use try/catch nodeView.
+          try {
+            engine.nodeView([q, r]);
+            coords.push([q, r]);
+          } catch { /* ignore */ }
+        }
+      }
+
+      // Draw edges lightly for visible neighborhood feel
+      for (const c of coords) {
+        const ck = `${c[0]},${c[1]}`;
+        if (!visSet.has(ck)) continue;
+        const [x1, y1] = axialToXY(c);
+        for (const [dq, dr] of [[1,0],[0,1],[1,-1]]) {
+          const n = [c[0]+dq, c[1]+dr];
+          const nk = `${n[0]},${n[1]}`;
+          if (!visSet.has(nk)) continue;
+          const [x2, y2] = axialToXY(n);
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", x1);
+          line.setAttribute("y1", y1);
+          line.setAttribute("x2", x2);
+          line.setAttribute("y2", y2);
+          line.setAttribute("stroke", "rgba(255,255,255,0.10)");
+          line.setAttribute("stroke-width", "1");
+          svg.appendChild(line);
+        }
+      }
+
+      // Draw nodes
+      for (const c of coords) {
+        const ck = `${c[0]},${c[1]}`;
+        const view = engine.nodeView(c);
+        const [x, y] = axialToXY(c);
+
+        const isVisible = visSet.has(ck);
+        const isStabilized = stabSet.has(ck);
+        const isMarker = markerSet.has(ck);
+        const isPlayer = (c[0] === ps.position[0] && c[1] === ps.position[1]);
+
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("transform", `translate(${x},${y})`);
+
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("r", isPlayer ? "10" : "7");
+        circle.setAttribute("fill", isVisible ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.08)");
+        circle.setAttribute("stroke", isStabilized ? "rgba(217,180,91,0.55)" : "rgba(255,255,255,0.18)");
+        circle.setAttribute("stroke-width", isStabilized ? "2" : "1");
+        circle.style.cursor = isVisible ? "pointer" : "default";
+
+        // Click-to-move: only allow clicking adjacent visible nodes
+        circle.addEventListener("click", () => {
+          if (!isVisible) return;
+          safeAct(() => engine.move({ to: c }), `MOVE (${c[0]},${c[1]})`);
+        });
+
+        g.appendChild(circle);
+
+        if (isMarker) {
+          const ring = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          ring.setAttribute("r", "14");
+          ring.setAttribute("fill", "none");
+          ring.setAttribute("stroke", "rgba(217,180,91,0.6)");
+          ring.setAttribute("stroke-width", "2");
+          g.appendChild(ring);
+        }
+
+        if (isPlayer) {
+          const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          t.setAttribute("y", "4");
+          t.setAttribute("text-anchor", "middle");
+          t.setAttribute("font-size", "12");
+          t.setAttribute("fill", "rgba(0,0,0,0.85)");
+          t.textContent = "@";
+          g.appendChild(t);
+        }
+
+        // small coord label when visible
+        if (isVisible) {
+          const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          label.setAttribute("y", "24");
+          label.setAttribute("text-anchor", "middle");
+          label.setAttribute("font-size", "10");
+          label.setAttribute("fill", "rgba(255,255,255,0.35)");
+          label.textContent = `${c[0]},${c[1]}`;
+          g.appendChild(label);
+        }
+
+        svg.appendChild(g);
+      }
+    }
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>
