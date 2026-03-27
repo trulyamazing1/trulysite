@@ -265,14 +265,18 @@ When you feel something has formed… attempt the hatch.
     const stressValue = reqId("stressValue");
     const hatchBtn = reqId("hatchBtn");
 
-    const state = {
-      variation: 0,
-      repetition: 0,
-      stress: 0,
-      calm: 0,
-      history: ["gold"],
-      currentColor: "gold"
-    };
+   const state = {
+  variation: 0,
+  repetition: 0,
+  stress: 0,
+  calm: 0,
+
+  started: false,
+  syncHold: 0,
+
+  history: ["gold"],
+  currentColor: "gold"
+};
 
     document.querySelectorAll("[data-action]").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -283,27 +287,45 @@ When you feel something has formed… attempt the hatch.
 
     hatchBtn.addEventListener("click", completeSession);
 
-    function applyAction(action) {
-      if (action === "gentle") {
-        state.calm += 2;
-        state.stress = Math.max(0, state.stress - 1);
-        state.variation += 1;
-      } else if (action === "vary") {
-        state.variation += 2;
-        state.calm += 1;
-      } else if (action === "repeat") {
-        state.repetition += 2;
-        state.variation = Math.max(0, state.variation - 1);
-      } else if (action === "chaos") {
-        state.stress += 2;
-        state.variation += 1;
-        state.calm = Math.max(0, state.calm - 1);
-      }
+  function applyAction(action) {
+  state.started = true;
 
-      state.currentColor = determineColor();
-      state.history.push(state.currentColor);
-      if (state.history.length > 12) state.history.shift();
-    }
+  if (action === "gentle") {               // Grow
+    state.calm += 2;
+    state.variation += 1;
+    state.stress = Math.max(0, state.stress - 1);
+  } else if (action === "vary") {          // Water Other
+    state.variation += 2;
+    state.calm += 1;
+    state.stress = Math.max(0, state.stress - 0.5);
+  } else if (action === "repeat") {        // Spiral Sync
+    state.repetition += 2;
+    state.calm += 1;
+    state.stress = Math.max(0, state.stress - 1);
+
+    // ✅ reward: hold stability for the next 2 actions
+    state.syncHold = Math.min(2, state.syncHold + 1);
+
+    // ❌ IMPORTANT: REMOVE the old line that reduced variation.
+    // (That was the “no progress” feeling.)
+    // state.variation = Math.max(0, state.variation - 1);
+  } else if (action === "chaos") {         // Prune / Reflect (for now mapped to chaos button)
+    state.stress += 1;
+    state.calm = Math.max(0, state.calm - 0.5);
+
+    // reflect tends to *reduce noise* long-term and deepen variation
+    state.variation += 1;
+  }
+
+  state.currentColor = determineColor();
+
+  // keep history clean: gold only on landing
+  if (state.currentColor !== "gold") state.history.push(state.currentColor);
+  if (state.history.length > 12) state.history.shift();
+
+  // consume sync hold after non-sync actions
+  if (action !== "repeat" && state.syncHold > 0) state.syncHold -= 1;
+}
 
     function determineColor() {
   const hasBegun = state.history.length > 1 || (state.variation + state.repetition + state.stress + state.calm) > 0;
