@@ -618,6 +618,22 @@ if (mouth) {
       }, 420);
     }
 
+    function trackEyes(e) {
+  const rect = el.eggWrap.getBoundingClientRect();
+
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+
+  const dx = (e.clientX - centerX) / rect.width;
+  const dy = (e.clientY - centerY) / rect.height;
+
+  const moveX = dx * 6; // horizontal sensitivity
+  const moveY = dy * 6; // vertical sensitivity
+
+  document.querySelectorAll('.eye').forEach(eye => {
+    eye.style.transform = `translate(${moveX}px, ${moveY}px) scale(var(--eye-scale))`;
+  });
+}
     function reactToTouch() {
       state.curiosity = clamp(state.curiosity + 0.02, 0, 1);
       state.coherence = clamp(state.coherence + 0.01, 0, 1);
