@@ -230,6 +230,18 @@
 
     .cheek.left { left: 10px; top: 42px; }
     .cheek.right { right: 10px; top: 42px; }
+    .mouth {
+  position: absolute;
+  left: 50%;
+  top: 56px;
+  width: 14px;
+  height: 7px;
+  transform: translateX(-50%);
+  border-bottom: 2px solid rgba(70, 28, 12, 0.55);
+  border-radius: 0 0 12px 12px;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
 
     .blink { position: absolute; width: 14px; height: 2px; background: rgba(86, 42, 10, 0.6); border-radius: 999px; opacity: 0; }
     .blink.left { left: 23px; top: 32px; }
