@@ -630,15 +630,43 @@
       hatchState.currentColor = determineHatchColor();
     }
 
-    function determineCreature() {
-      if (hatchState.currentColor === "purple" && hatchState.calm >= 4 && hatchState.variation >= 5) {
-        return {
-          name: "Dragon",
-          symbol: "🐉",
-          origin: "Coherent Emergence",
-          text: "This creature formed through movement, variation, and a field stable enough to hold becoming."
-        };
-      }
+    if (hatchState.currentColor === "purple") {
+
+  if (hatchState.variation >= 6 && hatchState.calm >= 4 && hatchState.repetition <= 2) {
+    return {
+      name: "Dragon",
+      symbol: "🐉",
+      origin: "Coherent Expansion",
+      text: "Formed through wide exploration and balanced movement. It carries a complete pattern."
+    };
+  }
+
+  if (hatchState.variation >= 4 && hatchState.repetition >= 2 && hatchState.calm >= 3) {
+    return {
+      name: "Fox-Dragon",
+      symbol: "🦊✨",
+      origin: "Clever Patterning",
+      text: "Born from intentional loops and playful returns. It remembers paths and bends them."
+    };
+  }
+
+  if (hatchState.calm >= 5 && hatchState.variation >= 3 && hatchState.repetition <= 3) {
+    return {
+      name: "Labrilion",
+      symbol: "🦁",
+      origin: "Stable Mastery",
+      text: "A grounded and powerful being shaped through patience and steady control."
+    };
+  }
+
+  // fallback if purple but no strong identity
+  return {
+    name: "Unformed Dragon",
+    symbol: "🐲",
+    origin: "Incomplete Coherence",
+    text: "Something powerful nearly formed, but the pattern did not fully resolve."
+  };
+}
 
       if (hatchState.currentColor === "blue") {
         return {
