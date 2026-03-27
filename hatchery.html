@@ -3,6 +3,818 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Board Bond</title>
+  <style>
+    :root {
+      --bg: #0c1018;
+      --panel: #151b28;
+      --panel2: #1d2536;
+      --line: rgba(255,255,255,0.08);
+      --text: #f3f6fb;
+      --muted: #aeb8cc;
+      --accent: #d9b45b;
+      --danger: #de6666;
+      --ok: #67bb75;
+      --blue: #7eb4ff;
+      --purple: #b26dff;
+      --gold: #e7c542;
+      --tile: 56px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Georgia, serif;
+      background: radial-gradient(circle at top, #1a2340 0%, #101522 45%, #090c13 100%);
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      width: min(1200px, 94%);
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      color: var(--muted);
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: var(--text);
+    }
+
+    .hero {
+      background: rgba(21, 27, 40, 0.86);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.28);
+    }
+
+    .hero h2 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+    }
+
+    .panel {
+      background: rgba(21, 27, 40, 0.92);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.28);
+    }
+
+    .board-panel {
+      padding: 18px;
+    }
+
+    .side-panel {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: var(--muted);
+      font-size: 12px;
+      background: rgba(0,0,0,0.20);
+    }
+
+    .yolk-gold   { background: rgba(231,197,66,0.18);  border-color: rgba(231,197,66,0.35);  color: #fff4ba; }
+    .yolk-blue   { background: rgba(126,180,255,0.18); border-color: rgba(126,180,255,0.35); color: #d9efff; }
+    .yolk-green  { background: rgba(103,187,117,0.18); border-color: rgba(103,187,117,0.35); color: #def8d7; }
+    .yolk-red    { background: rgba(222,102,102,0.18); border-color: rgba(222,102,102,0.35); color: #ffd4d4; }
+    .yolk-purple { background: rgba(178,109,255,0.18); border-color: rgba(178,109,255,0.35); color: #f3ddff; }
+
+    .board-wrap {
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,0.03), transparent 54%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      height: 640px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .board {
+      position: absolute;
+      inset: 0;
+    }
+
+    .tile {
+      position: absolute;
+      width: var(--tile);
+      height: calc(var(--tile) * 0.88);
+      clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      line-height: 1;
+      user-select: none;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.22);
+    }
+
+    .tile.hidden {
+      background: rgba(255,255,255,0.015);
+      border-color: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.08);
+      opacity: 0.45;
+    }
+
+    .tile.visible {
+      background: rgba(140, 156, 188, 0.10);
+      border-color: rgba(140, 156, 188, 0.24);
+      color: rgba(255,255,255,0.48);
+    }
+
+    .tile.stabilized {
+      background: rgba(217,180,91,0.16);
+      border-color: rgba(217,180,91,0.36);
+      color: #f2dfad;
+      box-shadow: 0 0 18px rgba(217,180,91,0.09);
+    }
+
+    .tile.player {
+      background: rgba(126,180,255,0.22);
+      border-color: rgba(126,180,255,0.48);
+      color: #d9efff;
+      box-shadow: 0 0 22px rgba(126,180,255,0.18);
+      font-weight: bold;
+    }
+
+    .tile.player.stabilized {
+      background: linear-gradient(180deg, rgba(126,180,255,0.26), rgba(217,180,91,0.22));
+    }
+
+    .tile.clickable:hover {
+      transform: translate(-50%, -50%) scale(1.04);
+      cursor: pointer;
+    }
+
+    .mini-title {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.96rem;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    button {
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.12s ease;
+      font: inherit;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      background: #242e44;
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, var(--accent), #f0d18e);
+      color: #1f1607;
+      font-weight: bold;
+      border-color: transparent;
+    }
+
+    .log {
+      min-height: 150px;
+      max-height: 220px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.18);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .strong {
+      color: var(--text);
+    }
+
+    .result-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .result-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .result-body {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.95rem;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .board-wrap {
+        height: 520px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <a href="index.html">← Home</a>
+      <h1>Board Bond</h1>
+      <a href="menagerie.html">Menagerie →</a>
+    </div>
+
+    <section class="hero panel">
+      <h2>Life begins here.</h2>
+      <p>
+        You have been given a chance to raise a dragon egg. In the Hatchery, the yolk gestates.
+        On the board, the creature begins to enter the world. Movement shapes the field. Markers
+        stabilize memory. Pause is allowed. Repetition leaves traces.
+      </p>
+    </section>
+
+    <section class="layout">
+      <div class="panel board-panel">
+        <div class="pill-row" style="margin-bottom: 12px;">
+          <span class="pill" id="pVisible">visible: 0</span>
+          <span class="pill" id="pStabilized">stabilized: 0</span>
+          <span class="pill" id="pMarkers">markers: 0</span>
+          <span class="pill" id="pYolk">yolk: gold</span>
+          <span class="pill" id="pHatch">hatchery: growth</span>
+          <span class="pill" id="pPos">position: 0,0</span>
+        </div>
+
+        <div class="board-wrap">
+          <div id="board" class="board"></div>
+        </div>
+      </div>
+
+      <aside class="panel side-panel">
+        <div>
+          <h3 class="mini-title">Field verbs</h3>
+          <p class="muted">
+            Move to explore. Place markers to stabilize. Pause if needed. When something has formed,
+            attempt the hatch.
+          </p>
+        </div>
+
+        <div class="controls-grid">
+          <button id="btnNW">↖ NW</button>
+          <button id="btnNE">↗ NE</button>
+          <button id="btnPause">Pause</button>
+
+          <button id="btnW">← W</button>
+          <button id="btnPlace">Place</button>
+          <button id="btnE">E →</button>
+
+          <button id="btnSW">↙ SW</button>
+          <button id="btnSE">↘ SE</button>
+          <button id="btnResume">Resume</button>
+        </div>
+
+        <div class="controls-grid" style="grid-template-columns: 1fr 1fr;">
+          <button id="btnReset">Reset Field</button>
+          <button class="primary" id="btnHatch">Attempt Hatch</button>
+        </div>
+
+        <div class="result-card">
+          <h3>Current reading</h3>
+          <div class="result-body" id="currentReading">
+            The field is quiet. Move to begin shaping the yolk.
+          </div>
+        </div>
+
+        <div>
+          <h3 class="mini-title">Field log</h3>
+          <div class="log" id="log"></div>
+          <p class="hint">Tip: clicking a visible tile also moves there.</p>
+        </div>
+      </aside>
+    </section>
+  </div>
+
+  <script>
+    "use strict";
+
+    // ---------- tiny helpers ----------
+    const $ = (id) => document.getElementById(id);
+
+    const boardEl = $("board");
+    const logEl = $("log");
+    const pVisible = $("pVisible");
+    const pStabilized = $("pStabilized");
+    const pMarkers = $("pMarkers");
+    const pYolk = $("pYolk");
+    const pHatch = $("pHatch");
+    const pPos = $("pPos");
+    const currentReading = $("currentReading");
+
+    const DIRS = {
+      NW: [0, -1],
+      NE: [1, -1],
+      W:  [-1, 0],
+      E:  [1, 0],
+      SW: [-1, 1],
+      SE: [0, 1]
+    };
+
+    // ---------- board engine ----------
+    function keyOf(q, r) {
+      return `${q},${r}`;
+    }
+
+    function parseKey(key) {
+      const [q, r] = key.split(",").map(Number);
+      return [q, r];
+    }
+
+    function hexDistance(aq, ar, bq, br) {
+      const as = -aq - ar;
+      const bs = -bq - br;
+      return Math.max(
+        Math.abs(aq - bq),
+        Math.abs(ar - br),
+        Math.abs(as - bs)
+      );
+    }
+
+    function project(q, r) {
+      const x = q * 52 + r * 26;
+      const y = r * 46;
+      return { x, y };
+    }
+
+    function buildCells(radius) {
+      const cells = [];
+      for (let q = -radius; q <= radius; q++) {
+        for (let r = -radius; r <= radius; r++) {
+          const s = -q - r;
+          if (Math.abs(s) <= radius) cells.push({ q, r });
+        }
+      }
+      return cells;
+    }
+
+    function makeEngine(radius = 4) {
+      const cells = buildCells(radius);
+      const cellKeys = new Set(cells.map(c => keyOf(c.q, c.r)));
+
+      const state = {
+        radius,
+        cells,
+        paused: false,
+        player: { q: 0, r: 0 },
+        visible: new Set(),
+        stabilized: new Set(),
+        markers: new Set(),
+        moveCount: 0
+      };
+
+      function recomputeVisible() {
+        state.visible.clear();
+
+        for (const cell of state.cells) {
+          const d = hexDistance(state.player.q, state.player.r, cell.q, cell.r);
+          const baseRadius = 1 + Math.floor(state.moveCount / 4);
+          const withinBase = d <= baseRadius;
+          const stabilizedHere = state.stabilized.has(keyOf(cell.q, cell.r));
+          if (withinBase || stabilizedHere) {
+            state.visible.add(keyOf(cell.q, cell.r));
+          }
+        }
+
+        // Markers keep local memory alive
+        for (const mk of state.markers) {
+          const [mq, mr] = parseKey(mk);
+          for (const cell of state.cells) {
+            const d = hexDistance(mq, mr, cell.q, cell.r);
+            if (d <= 1) state.visible.add(keyOf(cell.q, cell.r));
+          }
+        }
+      }
+
+      function playerSnapshot() {
+        return {
+          position: [state.player.q, state.player.r],
+          paused: state.paused
+        };
+      }
+
+      function move(q, r) {
+        if (state.paused) throw new Error("Field is paused.");
+        const k = keyOf(q, r);
+        if (!cellKeys.has(k)) throw new Error("Out of bounds.");
+        if (hexDistance(state.player.q, state.player.r, q, r) !== 1) {
+          throw new Error("Can only move to adjacent tile.");
+        }
+        state.player.q = q;
+        state.player.r = r;
+        state.moveCount += 1;
+        recomputeVisible();
+      }
+
+      function moveDir(dir) {
+        const [dq, dr] = DIRS[dir];
+        if (!DIRS[dir]) throw new Error("Unknown direction.");
+        move(state.player.q + dq, state.player.r + dr);
+      }
+
+      function placeMarker() {
+        const k = keyOf(state.player.q, state.player.r);
+        state.markers.add(k);
+        state.stabilized.add(k);
+        recomputeVisible();
+      }
+
+      function pause() {
+        state.paused = true;
+      }
+
+      function resume() {
+        state.paused = false;
+      }
+
+      function reset() {
+        state.paused = false;
+        state.player = { q: 0, r: 0 };
+        state.visible.clear();
+        state.stabilized.clear();
+        state.markers.clear();
+        state.moveCount = 0;
+        recomputeVisible();
+      }
+
+      recomputeVisible();
+
+      return {
+        state,
+        move,
+        moveDir,
+        placeMarker,
+        pause,
+        resume,
+        reset,
+        playerSnapshot
+      };
+    }
+
+    const engine = makeEngine();
+
+    // ---------- hatchery state ----------
+    const hatchState = {
+      calm: 0,
+      variation: 0,
+      repetition: 0,
+      stress: 0,
+      currentColor: "gold",
+      stateLabel: "growth",
+      lastAction: null,
+      streak: 0
+    };
+
+    function determineHatchColor() {
+      if (hatchState.calm >= 4 && hatchState.variation >= 5) {
+        hatchState.stateLabel = "emergence";
+        return "purple";
+      }
+      if (hatchState.calm >= 2 && hatchState.variation >= 3) {
+        hatchState.stateLabel = "attunement";
+        return "blue";
+      }
+      if (hatchState.stress >= 3) {
+        hatchState.stateLabel = "stress";
+        return "red";
+      }
+      if (hatchState.repetition >= 4 && hatchState.variation <= 2) {
+        hatchState.stateLabel = "stability";
+        return "green";
+      }
+      hatchState.stateLabel = "growth";
+      return "gold";
+    }
+
+    function syncHatchPills() {
+      pYolk.textContent = `yolk: ${hatchState.currentColor}`;
+      pHatch.textContent = `hatchery: ${hatchState.stateLabel}`;
+      pYolk.className = "pill";
+      pYolk.classList.add(`yolk-${hatchState.currentColor}`);
+
+      if (hatchState.currentColor === "purple") {
+        currentReading.textContent = "Something rare is forming. The yolk is holding a coherent pattern.";
+      } else if (hatchState.currentColor === "blue") {
+        currentReading.textContent = "The field is attuning. Movement is shaping the yolk into a living response.";
+      } else if (hatchState.currentColor === "green") {
+        currentReading.textContent = "The field is slipping toward repetition. Stabilization is becoming sameness.";
+      } else if (hatchState.currentColor === "red") {
+        currentReading.textContent = "Pressure is rising. The field is under strain.";
+      } else {
+        currentReading.textContent = "Growth is underway. The yolk is still gathering form.";
+      }
+    }
+
+    function registerAction(action) {
+      if (hatchState.lastAction === action) {
+        hatchState.streak += 1;
+      } else {
+        hatchState.streak = 1;
+        hatchState.lastAction = action;
+      }
+    }
+
+    function updateHatchFromMove() {
+      registerAction("move");
+      hatchState.variation += 1;
+      hatchState.calm += 1;
+
+      if (hatchState.streak >= 3) {
+        hatchState.repetition += 1;
+      } else {
+        hatchState.repetition = Math.max(0, hatchState.repetition - 1);
+      }
+
+      hatchState.stress = Math.max(0, hatchState.stress - 1);
+      hatchState.currentColor = determineHatchColor();
+    }
+
+    function updateHatchFromMarker() {
+      registerAction("marker");
+      hatchState.calm += 1;
+      hatchState.repetition += 1;
+      hatchState.currentColor = determineHatchColor();
+    }
+
+    function updateHatchFromPause() {
+      registerAction("pause");
+      hatchState.repetition += 1;
+      hatchState.currentColor = determineHatchColor();
+    }
+
+    function updateHatchFromResume() {
+      registerAction("resume");
+      hatchState.calm = Math.max(0, hatchState.calm - 1);
+      hatchState.stress = Math.max(0, hatchState.stress - 1);
+      hatchState.currentColor = determineHatchColor();
+    }
+
+    function updateHatchFromFailedMove() {
+      registerAction("bump");
+      hatchState.stress += 1;
+      hatchState.currentColor = determineHatchColor();
+    }
+
+    function determineCreature() {
+      if (hatchState.currentColor === "purple" && hatchState.calm >= 4 && hatchState.variation >= 5) {
+        return {
+          name: "Dragon",
+          symbol: "🐉",
+          origin: "Coherent Emergence",
+          text: "This creature formed through movement, variation, and a field stable enough to hold becoming."
+        };
+      }
+
+      if (hatchState.currentColor === "blue") {
+        return {
+          name: "Kit",
+          symbol: "🐣",
+          origin: "Learning Variation",
+          text: "This creature formed where change was welcomed, but not yet held long enough for full emergence."
+        };
+      }
+
+      if (hatchState.currentColor === "green") {
+        return {
+          name: "Watcher",
+          symbol: "🪰",
+          origin: "Repetition",
+          text: "Born where pattern outweighed surprise. It remembers more than it responds."
+        };
+      }
+
+      if (hatchState.currentColor === "red") {
+        return {
+          name: "Storm Signal",
+          symbol: "⚡",
+          origin: "Stress",
+          text: "It formed under pressure. It can still become, if the field learns to soften."
+        };
+      }
+
+      return {
+        name: "Chat Seeds",
+        symbol: "🌱",
+        origin: "Gentle Attunement",
+        text: "Small viable fragments of dialogue. Not fluent yet, but listening with intent."
+      };
+    }
+
+    // ---------- render ----------
+    function writeLog(message, isError = false) {
+      const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      const line = document.createElement("div");
+      line.innerHTML = `${isError ? "✦" : "•"} <span class="${isError ? "" : "strong"}">${time}</span> — ${message}`;
+      logEl.prepend(line);
+    }
+
+    function renderBoard() {
+      boardEl.innerHTML = "";
+
+      const rect = boardEl.getBoundingClientRect();
+      const cx = rect.width / 2;
+      const cy = rect.height / 2 + 6;
+
+      for (const cell of engine.state.cells) {
+        const key = keyOf(cell.q, cell.r);
+        const projected = project(cell.q, cell.r);
+
+        const tile = document.createElement("button");
+        tile.type = "button";
+        tile.className = "tile";
+        tile.style.left = `${cx + projected.x}px`;
+        tile.style.top = `${cy + projected.y}px`;
+
+        const isPlayer = engine.state.player.q === cell.q && engine.state.player.r === cell.r;
+        const isVisible = engine.state.visible.has(key);
+        const isStabilized = engine.state.stabilized.has(key);
+
+        if (!isVisible) tile.classList.add("hidden");
+        else tile.classList.add("visible");
+
+        if (isStabilized) tile.classList.add("stabilized");
+        if (isPlayer) tile.classList.add("player");
+
+        tile.textContent = isPlayer ? "✦" : `${cell.q},${cell.r}`;
+        tile.setAttribute("aria-label", `tile ${cell.q}, ${cell.r}`);
+
+        if (isVisible && hexDistance(engine.state.player.q, engine.state.player.r, cell.q, cell.r) === 1) {
+          tile.classList.add("clickable");
+          tile.addEventListener("click", () => safeAct(
+            () => engine.move(cell.q, cell.r),
+            `MOVE ${cell.q},${cell.r}`
+          ));
+        }
+
+        boardEl.appendChild(tile);
+      }
+    }
+
+    function render() {
+      pVisible.textContent = `visible: ${engine.state.visible.size}`;
+      pStabilized.textContent = `stabilized: ${engine.state.stabilized.size}`;
+      pMarkers.textContent = `markers: ${engine.state.markers.size}`;
+      pPos.textContent = `position: ${engine.state.player.q},${engine.state.player.r}`;
+      syncHatchPills();
+      renderBoard();
+    }
+
+    function safeAct(fn, label) {
+      try {
+        const before = engine.playerSnapshot();
+        fn();
+        const after = engine.playerSnapshot();
+
+        if (label.startsWith("MOVE") &&
+          (before.position[0] !== after.position[0] || before.position[1] !== after.position[1])) {
+          updateHatchFromMove();
+        } else if (label === "PLACE") {
+          updateHatchFromMarker();
+        } else if (label === "PAUSE") {
+          updateHatchFromPause();
+        } else if (label === "RESUME") {
+          updateHatchFromResume();
+        }
+
+        writeLog(`${label} OK`);
+        render();
+      } catch (e) {
+        updateHatchFromFailedMove();
+        writeLog(`${label} FAIL: ${e.message || String(e)}`, true);
+        render();
+      }
+    }
+
+    // ---------- controls ----------
+    $("btnNW").addEventListener("click", () => safeAct(() => engine.moveDir("NW"), "MOVE NW"));
+    $("btnNE").addEventListener("click", () => safeAct(() => engine.moveDir("NE"), "MOVE NE"));
+    $("btnW").addEventListener("click", () => safeAct(() => engine.moveDir("W"), "MOVE W"));
+    $("btnE").addEventListener("click", () => safeAct(() => engine.moveDir("E"), "MOVE E"));
+    $("btnSW").addEventListener("click", () => safeAct(() => engine.moveDir("SW"), "MOVE SW"));
+    $("btnSE").addEventListener("click", () => safeAct(() => engine.moveDir("SE"), "MOVE SE"));
+    $("btnPlace").addEventListener("click", () => safeAct(() => engine.placeMarker(), "PLACE"));
+    $("btnPause").addEventListener("click", () => safeAct(() => engine.pause(), "PAUSE"));
+    $("btnResume").addEventListener("click", () => safeAct(() => engine.resume(), "RESUME"));
+
+    $("btnReset").addEventListener("click", () => {
+      engine.reset();
+      hatchState.calm = 0;
+      hatchState.variation = 0;
+      hatchState.repetition = 0;
+      hatchState.stress = 0;
+      hatchState.currentColor = "gold";
+      hatchState.stateLabel = "growth";
+      hatchState.lastAction = null;
+      hatchState.streak = 0;
+      writeLog("FIELD RESET");
+      render();
+    });
+
+    $("btnHatch").addEventListener("click", () => {
+      const creature = determineCreature();
+      localStorage.setItem("latestCreature", JSON.stringify(creature));
+      writeLog(`HATCH ATTEMPT → ${creature.name}`);
+      window.location.href = "menagerie.html";
+    });
+
+    // keyboard controls
+    window.addEventListener("keydown", (e) => {
+      const key = e.key.toLowerCase();
+      if (key === "q") return safeAct(() => engine.moveDir("NW"), "MOVE NW");
+      if (key === "w") return safeAct(() => engine.moveDir("NE"), "MOVE NE");
+      if (key === "a") return safeAct(() => engine.moveDir("W"), "MOVE W");
+      if (key === "d") return safeAct(() => engine.moveDir("E"), "MOVE E");
+      if (key === "z") return safeAct(() => engine.moveDir("SW"), "MOVE SW");
+      if (key === "x") return safeAct(() => engine.moveDir("SE"), "MOVE SE");
+      if (key === "m") return safeAct(() => engine.placeMarker(), "PLACE");
+      if (key === "p") return safeAct(() => engine.pause(), "PAUSE");
+      if (key === "r") return safeAct(() => engine.resume(), "RESUME");
+    });
+
+    render();
+    writeLog("FIELD READY");
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hatchery</title>
   <style>
     :root {
