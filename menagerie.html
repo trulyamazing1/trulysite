@@ -167,7 +167,22 @@
       animation: eggBreath var(--pulse-duration) ease-in-out infinite;
       overflow: hidden;
     }
-
+.egg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      130deg,
+      transparent 48%,
+      rgba(255,255,255,var(--crack-opacity, 0)) 49%,
+      rgba(255,255,255,var(--crack-opacity, 0)) 51%,
+      transparent 52%
+    );
+  opacity: var(--crack-opacity, 0);
+  pointer-events: none;
+}
     .egg::before {
       content: "";
       position: absolute;
@@ -486,10 +501,20 @@
       trust: 0.08,
       coherence: 0.10,
       hatch: 0.10,
+      hasCracked: false,
       selectedHoard: null,
       usedHoard: new Set(),
       log: [],
       blinkTimer: null
+      function triggerFirstCrack() {
+  state.hasCracked = true;
+
+  document.documentElement.style.setProperty('--crack-opacity', '0.8');
+
+  setStatus("Something inside presses outward.");
+
+  addLog("The shell shifted", "Not a break. A beginning.");
+}
     };
 
     const el = {
@@ -549,6 +574,9 @@
         (state.coherence * 0.30),
         0,
         1
+        if (state.hatch >= 1.0 && !state.hasCracked) {
+  triggerFirstCrack();
+}
       );
 
       el.curiosityValue.textContent = percent(state.curiosity);
