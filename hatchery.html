@@ -335,34 +335,119 @@
     }
 
     function determineCreature() {
-      const greenCount = state.history.filter((c) => c === "green").length;
-      const purpleCount = state.history.filter((c) => c === "purple").length;
-      const blueCount = state.history.filter((c) => c === "blue").length;
-      const goldCount = state.history.filter((c) => c === "gold").length;
+  const counts = state.history.reduce((acc, c) => {
+    acc[c] = (acc[c] || 0) + 1;
+    return acc;
+  }, {});
 
-      if (greenCount >= 4 || state.repetition >= 8) {
-        return { name: "Watcher", symbol: "🪰", origin: "Repetition", text: "Born of routine, this creature learned not to reach—but to remain." };
+  const blue = counts.blue || 0;
+  const purple = counts.purple || 0;
+  const green = counts.green || 0;
+  const red = counts.red || 0;
+
+  // Normalize progress signals
+  const calm = state.calm;
+  const variation = state.variation;
+  const repetition = state.repetition;
+  const stress = state.stress;
+
+  // Scores (tune these knobs)
+  const scoreEcho =
+    1.0 +
+    (green * 0.7) +
+    (repetition * 0.5) -
+    (purple * 0.8) -
+    (variation * 0.25);
+
+  const scoreChatSeeds =
+    1.0 +
+    (blue * 0.6) +
+    (calm * 0.35) +
+    (variation * 0.15) -
+    (stress * 0.3);
+
+  // Make Dialogue Bloom scale hard with calm+variation+purple presence
+  const scoreDialogueBloom =
+    0.6 +
+    (purple * 1.2) +
+    (blue * 0.5) +
+    (calm * 0.55) +
+    (variation * 0.5) -
+    (stress * 0.55) -
+    (repetition * 0.25);
+
+  const scoreStorm =
+    0.4 +
+    (red * 1.1) +
+    (stress * 0.8) -
+    (calm * 0.35);
+
+  // Clamp to >= 0 so nothing goes negative
+  const weights = [
+    { key: "echo", w: Math.max(0, scoreEcho) },
+    { key: "chatSeeds", w: Math.max(0, scoreChatSeeds) },
+    { key: "dialogueBloom", w: Math.max(0, scoreDialogueBloom) },
+    { key: "storm", w: Math.max(0, scoreStorm) },
+  ];
+
+  // If they achieved strong emergence, force the best outcome.
+  if (scoreDialogueBloom >= 6.0) {
+    return {
+      name: "Dialogue Bloom",
+      symbol: "🌸",
+      origin: "Coherence + Variation",
+      text: "A conversational creature—formed when change was welcomed and held gently long enough to become a language."
+    };
+  }
+
+  // Weighted pick
+  const total = weights.reduce((s, x) => s + x.w, 0);
+  let roll = Math.random() * (total || 1);
+
+  for (const item of weights) {
+    roll -= item.w;
+    if (roll <= 0) {
+      if (item.key === "echo") {
+        return {
+          name: "Echo",
+          symbol: "✨",
+          origin: "Repetition",
+          text: "Born where pattern outweighed surprise. It remembers, more than it responds."
+        };
       }
-
-      if (purpleCount >= 1 && state.variation >= 4 && state.calm >= 3 && purpleCount < 3) {
-        return { name: "Kit", symbol: "🐣", origin: "Learning Variation", text: "This creature formed where change was welcomed, but not yet held long enough for full emergence." };
+      if (item.key === "chatSeeds") {
+        return {
+          name: "Chat Seeds",
+          symbol: "🌱",
+          origin: "Gentle Attunement",
+          text: "Small, viable fragments of dialogue. It’s not fluent yet, but it’s listening with intent."
+        };
       }
-
-      if (blueCount >= 2 && goldCount >= 2 && state.calm >= 5 && state.variation >= 5 && purpleCount === 0) {
-        return { name: "Labrilion", symbol: "🦁", origin: "Refined Mastery", text: "Steady, warm, and balanced, this creature formed where change was welcomed without being chased." };
+      if (item.key === "dialogueBloom") {
+        return {
+          name: "Dialogue Bloom",
+          symbol: "🌸",
+          origin: "Coherence + Variation",
+          text: "A conversational creature—formed when change was welcomed and held gently long enough to become a language."
+        };
       }
-
-      if (blueCount >= 2 && goldCount >= 2 && state.variation >= 7) {
-        return { name: "Fox Creature", symbol: "🦊", origin: "Expressive Variation", text: "Colorful and bright, with fur, wings, and a scaled belly, this creature formed through playful diversity." };
-      }
-
-      if (purpleCount >= 3 && state.variation >= 7 && state.calm >= 5) {
-        return { name: "Dragon", symbol: "🐉", origin: "Successful Emergence", text: "This creature emerged through variation, persistence, and coherence strong enough to hold becoming." };
-      }
-
-      return { name: "Unformed Echo", symbol: "✨", origin: "Partial Session", text: "Something stirred here, but did not yet settle into a known form." };
+      return {
+        name: "Storm Signal",
+        symbol: "⚡",
+        origin: "Stress",
+        text: "It formed under pressure. It can still become—if the room learns to soften."
+      };
     }
+  }
 
+  // Fallback
+  return {
+    name: "Chat Seeds",
+    symbol: "🌱",
+    origin: "Gentle Attunement",
+    text: "Small, viable fragments of dialogue. It’s not fluent yet, but it’s listening with intent."
+  };
+}
     function completeSession() {
       const creature = determineCreature();
       localStorage.setItem("latestCreature", JSON.stringify(creature));
