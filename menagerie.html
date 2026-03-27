@@ -589,17 +589,6 @@ function triggerFirstCrack() {
   el.coherenceMeter.style.width = percent(state.coherence);
   el.hatchMeter.style.width = percent(state.hatch);
 }
-
-      el.curiosityValue.textContent = percent(state.curiosity);
-      el.trustValue.textContent = percent(state.trust);
-      el.coherenceValue.textContent = percent(state.coherence);
-      el.hatchValue.textContent = percent(state.hatch);
-
-      el.curiosityMeter.style.width = percent(state.curiosity);
-      el.trustMeter.style.width = percent(state.trust);
-      el.coherenceMeter.style.width = percent(state.coherence);
-      el.hatchMeter.style.width = percent(state.hatch);
-
       const eyeScale = clamp(0.18 + state.curiosity * 0.95, 0.18, 1.08);
       const eyeOpacity = clamp(0.14 + state.curiosity * 0.86, 0.14, 1);
       const cheekOpacity = clamp((state.trust - 0.08) * 1.6, 0, 0.95);
