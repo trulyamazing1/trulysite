@@ -328,24 +328,25 @@ When you feel something has formed… attempt the hatch.
 }
 
     function determineColor() {
-  if (!state.started) return "gold"; // landing only
+  if (!state.started) return "gold";
 
-  // Spiral Sync reward: while held, treat stress as lower
-  const stress = state.stress - (state.syncHold > 0 ? 2 : 0);
+  if (state.stress >= 3) return "red";
 
-  // Red = overload / disharmony
-  if (stress >= 4 && state.calm < 3) return "red";
+  // Highest-order reflective state first
+  if (state.calm >= 4 && state.variation >= 4 && state.repetition >= 2) {
+    return "purple";
+  }
 
-  // Purple = rare reflective deep state (calm + high variation)
-  if (state.calm >= 6 && state.variation >= 7 && stress <= 3) return "purple";
+  // Coherent curiosity before simple sync
+  if (state.calm >= 3 && state.variation >= 3) {
+    return "blue";
+  }
 
-  // Blue = coherent curiosity (calm + some variation)
-  if (state.calm >= 4 && state.variation >= 4 && stress <= 4) return "blue";
+  // Stable sync only if variation is still low/moderate
+  if (state.repetition >= 2 && state.calm >= 2) {
+    return "green";
+  }
 
-  // Green = stable sync (repetition + not-too-stressed)
-  if (state.repetition >= 4 && stress <= 4) return "green";
-
-  // After starting, baseline is AMBER (progress-gold)
   return "amber";
 }
 
