@@ -567,16 +567,17 @@ function triggerFirstCrack() {
     }
 
     function updateMeters() {
-      state.hatch = clamp(
-        (state.curiosity * 0.35) +
-        (state.trust * 0.35) +
-        (state.coherence * 0.30),
-        0,
-        1
-      if (state.hatch >= 0.98 && !state.hasCracked)  {
-  triggerFirstCrack();
-}
-      );
+  state.hatch = clamp(
+    (state.curiosity * 0.35) +
+    (state.trust * 0.35) +
+    (state.coherence * 0.30),
+    0,
+    1
+  );
+
+  if (state.hatch >= 0.98 && !state.hasCracked) {
+    triggerFirstCrack();
+  }
 
       el.curiosityValue.textContent = percent(state.curiosity);
       el.trustValue.textContent = percent(state.trust);
