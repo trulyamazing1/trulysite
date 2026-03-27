@@ -334,7 +334,24 @@ When you feel something has formed… attempt the hatch.
     if (state.repetition >= 2 && state.calm >= 2) return "green";
 
     return "amber";
-  }
+  }function determineColor() {
+  const hasBegun = state.history.length > 1 || (state.variation + state.repetition + state.stress + state.calm) > 0;
+
+  // Gold is only allowed as the landing state before any interaction.
+  if (!hasBegun) return "gold";
+
+  // Priority: strong signals first
+  if (state.stress >= 2) return "red";
+  if (state.repetition >= 2) return "green";
+
+  // Bloom/emergence path
+  if (state.calm >= 2 && state.variation >= 2) return "blue";
+  if (state.calm >= 3 && state.variation >= 4) return "purple";
+
+  // If nothing else dominates, DO NOT return gold—hold the nearest “alive” state.
+  // Blue reads like gentle baseline progress.
+  return "blue";
+}
 
   function renderState() {
     variationValue.textContent = String(state.variation);
