@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -88,34 +87,12 @@
       animation: driftDust 22s linear infinite;
     }
 
-    .stage-copy {
-      position: relative;
-      z-index: 2;
-      max-width: 600px;
-    }
+    .stage-copy { position: relative; z-index: 2; max-width: 600px; }
+    .eyebrow { letter-spacing: 0.22em; text-transform: uppercase; font-size: 0.72rem; color: var(--muted); margin-bottom: 14px; }
 
-    .eyebrow {
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      font-size: 0.72rem;
-      color: var(--muted);
-      margin-bottom: 14px;
-    }
+    h1 { font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.02; margin: 0 0 12px; font-weight: 600; }
 
-    h1 {
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      line-height: 1.02;
-      margin: 0 0 12px;
-      font-weight: 600;
-    }
-
-    .lede {
-      color: var(--muted);
-      font-size: 1.03rem;
-      line-height: 1.65;
-      max-width: 56ch;
-      margin: 0;
-    }
+    .lede { color: var(--muted); font-size: 1.03rem; line-height: 1.65; max-width: 56ch; margin: 0; }
 
     .creature-zone {
       position: relative;
@@ -167,22 +144,24 @@
       animation: eggBreath var(--pulse-duration) ease-in-out infinite;
       overflow: hidden;
     }
-.egg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background:
-    linear-gradient(
-      130deg,
-      transparent 48%,
-      rgba(255,255,255,var(--crack-opacity, 0)) 49%,
-      rgba(255,255,255,var(--crack-opacity, 0)) 51%,
-      transparent 52%
-    );
-  opacity: var(--crack-opacity, 0);
-  pointer-events: none;
-}
+
+    .egg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background:
+        linear-gradient(
+          130deg,
+          transparent 48%,
+          rgba(255,255,255,var(--crack-opacity, 0)) 49%,
+          rgba(255,255,255,var(--crack-opacity, 0)) 51%,
+          transparent 52%
+        );
+      opacity: var(--crack-opacity, 0);
+      pointer-events: none;
+    }
+
     .egg::before {
       content: "";
       position: absolute;
@@ -247,14 +226,7 @@
       opacity: 0.8;
     }
 
-    .stage-footer {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+    .stage-footer { position: relative; z-index: 2; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
 
     .tag {
       display: inline-flex;
@@ -268,56 +240,19 @@
       color: var(--muted);
     }
 
-    .controls {
-      padding: 24px;
-      display: grid;
-      gap: 18px;
-      align-content: start;
-      min-height: 760px;
-    }
+    .controls { padding: 24px; display: grid; gap: 18px; align-content: start; min-height: 760px; }
 
-    .card {
-      background: var(--panel-strong);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 18px;
-    }
-
+    .card { background: var(--panel-strong); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 18px; }
     .card h2, .card h3 { margin: 0 0 10px; font-weight: 600; }
     .card p { margin: 0; color: var(--muted); line-height: 1.55; }
 
-    .resource-row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
+    .resource-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 
-    .resource {
-      padding: 14px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.09);
-      background: rgba(0,0,0,0.14);
-    }
-
-    .resource-label {
-      font-size: 0.8rem;
-      color: var(--muted);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
+    .resource { padding: 14px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.09); background: rgba(0,0,0,0.14); }
+    .resource-label { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
     .resource-value { font-size: 1.55rem; font-weight: 600; }
 
-    .meter {
-      width: 100%;
-      height: 10px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 999px;
-      overflow: hidden;
-      margin-top: 12px;
-    }
-
+    .meter { width: 100%; height: 10px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; margin-top: 12px; }
     .meter > span {
       display: block;
       height: 100%;
@@ -327,12 +262,7 @@
       transition: width 350ms ease;
     }
 
-    .hoard-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 14px;
-    }
+    .hoard-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
 
     .hoard-item {
       width: 100%;
@@ -350,7 +280,6 @@
     .hoard-item:hover { transform: translateY(-1px); border-color: rgba(255,215,106,0.4); background: rgba(255,215,106,0.05); }
     .hoard-item.selected { border-color: rgba(255,215,106,0.65); background: rgba(255,215,106,0.12); }
     .hoard-item.used { opacity: 0.38; cursor: not-allowed; filter: grayscale(0.3); }
-
     .hoard-name { display: block; font-size: 0.98rem; margin-bottom: 4px; }
     .hoard-note { display: block; font-size: 0.84rem; color: var(--muted); line-height: 1.4; }
 
@@ -371,6 +300,7 @@
     }
 
     textarea:focus { border-color: rgba(255,215,106,0.46); box-shadow: 0 0 0 3px rgba(255,215,106,0.08); }
+
     .button-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
 
     button.primary, button.secondary {
@@ -453,12 +383,12 @@
         <label for="seedInput">What do you say to it?</label>
         <textarea id="seedInput" placeholder="Speak to the yolk..."></textarea>
         <div class="button-row">
-          <button class="primary" id="speakBtn">Speak to It</button>
-          <button class="secondary" id="touchBtn">Touch the Egg</button>
-          <button class="secondary" id="bedBtn">Bed</button>
-          <button class="secondary" id="bathBtn">Bath</button>
-          <button class="secondary" id="socialBtn">Socialize</button>
-          <button class="secondary" id="feedBtn">Feed</button>
+          <button type="button" class="primary" id="speakBtn">Speak to It</button>
+          <button type="button" class="secondary" id="touchBtn">Touch the Egg</button>
+          <button type="button" class="secondary" id="bedBtn">Bed</button>
+          <button type="button" class="secondary" id="bathBtn">Bath</button>
+          <button type="button" class="secondary" id="socialBtn">Socialize</button>
+          <button type="button" class="secondary" id="feedBtn">Feed</button>
         </div>
       </section>
 
@@ -494,26 +424,20 @@
       { id: 6, name: 'A Paper Star', note: 'Folded by someone who hoped for more sky.' }
     ];
 
-   const state = {
-  phase: 'yolk',
-  chatSeeds: 3,
-  curiosity: 0.12,
-  trust: 0.08,
-  coherence: 0.10,
-  hatch: 0.10,
-  hasCracked: false,
-  selectedHoard: null,
-  usedHoard: new Set(),
-  log: [],
-  blinkTimer: null
-};
+    const state = {
+      phase: 'yolk',
+      chatSeeds: 3,
+      curiosity: 0.12,
+      trust: 0.08,
+      coherence: 0.10,
+      hatch: 0.10,
+      hasCracked: false,
+      selectedHoard: null,
+      usedHoard: new Set(),
+      log: [],
+      blinkTimer: null
+    };
 
-function triggerFirstCrack() {
-  state.hasCracked = true;
-  document.documentElement.style.setProperty('--crack-opacity', '0.8');
-  setStatus("Something inside presses outward.");
-  addLog("The shell shifted", "Not a break. A beginning.");
-}
     const el = {
       root: document.documentElement,
       hoardGrid: document.getElementById('hoardGrid'),
@@ -545,10 +469,29 @@ function triggerFirstCrack() {
     const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
     const percent = n => `${Math.round(n * 100)}%`;
 
+    function addLog(title, text) {
+      const entry = document.createElement('div');
+      entry.className = 'seed-entry';
+      entry.innerHTML = `<strong>${title}</strong><span>${text}</span>`;
+      el.seedLog.prepend(entry);
+    }
+
+    function setStatus(text) {
+      el.statusBox.textContent = text;
+    }
+
+    function triggerFirstCrack() {
+      state.hasCracked = true;
+      document.documentElement.style.setProperty('--crack-opacity', '0.8');
+      setStatus("Something inside presses outward.");
+      addLog("The shell shifted", "Not a break. A beginning.");
+    }
+
     function renderHoard() {
       el.hoardGrid.innerHTML = '';
       hoardItems.forEach(item => {
         const btn = document.createElement('button');
+        btn.type = 'button';
         btn.className = 'hoard-item';
         if (state.selectedHoard === item.id) btn.classList.add('selected');
         if (state.usedHoard.has(item.id)) btn.classList.add('used');
@@ -564,29 +507,29 @@ function triggerFirstCrack() {
       });
     }
 
-  function updateMeters() {
-  state.hatch = clamp(
-    (state.curiosity * 0.35) +
-    (state.trust * 0.35) +
-    (state.coherence * 0.30),
-    0,
-    1
-  );
+    function updateMeters() {
+      state.hatch = clamp(
+        (state.curiosity * 0.35) +
+        (state.trust * 0.35) +
+        (state.coherence * 0.30),
+        0,
+        1
+      );
 
-  if (state.hatch >= 0.98 && !state.hasCracked) {
-    triggerFirstCrack();
-  }
+      if (state.hatch >= 0.98 && !state.hasCracked) {
+        triggerFirstCrack();
+      }
 
-  el.curiosityValue.textContent = percent(state.curiosity);
-  el.trustValue.textContent = percent(state.trust);
-  el.coherenceValue.textContent = percent(state.coherence);
-  el.hatchValue.textContent = percent(state.hatch);
+      el.curiosityValue.textContent = percent(state.curiosity);
+      el.trustValue.textContent = percent(state.trust);
+      el.coherenceValue.textContent = percent(state.coherence);
+      el.hatchValue.textContent = percent(state.hatch);
 
-  el.curiosityMeter.style.width = percent(state.curiosity);
-  el.trustMeter.style.width = percent(state.trust);
-  el.coherenceMeter.style.width = percent(state.coherence);
-  el.hatchMeter.style.width = percent(state.hatch);
-}
+      el.curiosityMeter.style.width = percent(state.curiosity);
+      el.trustMeter.style.width = percent(state.trust);
+      el.coherenceMeter.style.width = percent(state.coherence);
+      el.hatchMeter.style.width = percent(state.hatch);
+
       const eyeScale = clamp(0.18 + state.curiosity * 0.95, 0.18, 1.08);
       const eyeOpacity = clamp(0.14 + state.curiosity * 0.86, 0.14, 1);
       const cheekOpacity = clamp((state.trust - 0.08) * 1.6, 0, 0.95);
@@ -612,17 +555,6 @@ function triggerFirstCrack() {
       }
 
       el.seedLabel.textContent = `Words Remaining: ${state.chatSeeds}`;
-    }
-
-    function addLog(title, text) {
-      const entry = document.createElement('div');
-      entry.className = 'seed-entry';
-      entry.innerHTML = `<strong>${title}</strong><span>${text}</span>`;
-      el.seedLog.prepend(entry);
-    }
-
-    function setStatus(text) {
-      el.statusBox.textContent = text;
     }
 
     function blink() {
@@ -696,9 +628,7 @@ function triggerFirstCrack() {
       state.curiosity = clamp(state.curiosity + 0.05 + (reading.curiosity * 0.12), 0, 1);
       state.trust = clamp(state.trust + 0.03 + (reading.warmth * 0.14), 0, 1);
       state.coherence = clamp(state.coherence + 0.04 + ((1 - reading.intensity) * 0.07), 0, 1);
-      if (reading.intensity > 0.45) {
-        state.coherence = clamp(state.coherence - 0.02, 0, 1);
-      }
+      if (reading.intensity > 0.45) state.coherence = clamp(state.coherence - 0.02, 0, 1);
 
       addLog(`You released ${offering.name}`, `“${text.length > 130 ? text.slice(0, 130) + '…' : text}”`);
       setStatus('It holds onto your words in silence. Something changed, even if you cannot yet name how.');
