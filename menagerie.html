@@ -494,25 +494,24 @@
       { id: 6, name: 'A Paper Star', note: 'Folded by someone who hoped for more sky.' }
     ];
 
-    const state = {
-      phase: 'yolk',
-      chatSeeds: 3,
-      curiosity: 0.12,
-      trust: 0.08,
-      coherence: 0.10,
-      hatch: 0.10,
-      hasCracked: false,
-      selectedHoard: null,
-      usedHoard: new Set(),
-      log: [],
-      blinkTimer: null
-      function triggerFirstCrack() {
+   const state = {
+  phase: 'yolk',
+  chatSeeds: 3,
+  curiosity: 0.12,
+  trust: 0.08,
+  coherence: 0.10,
+  hatch: 0.10,
+  hasCracked: false,
+  selectedHoard: null,
+  usedHoard: new Set(),
+  log: [],
+  blinkTimer: null
+};
+
+function triggerFirstCrack() {
   state.hasCracked = true;
-
   document.documentElement.style.setProperty('--crack-opacity', '0.8');
-
   setStatus("Something inside presses outward.");
-
   addLog("The shell shifted", "Not a break. A beginning.");
 }
     };
