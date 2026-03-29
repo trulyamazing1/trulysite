@@ -424,13 +424,31 @@
       return `${x},${y}`;
     }
 
-    function determineColor() {
-      if (state.calm >= 4 && state.variation >= 5) return "purple";
-      if (state.calm >= 2 && state.variation >= 3) return "blue";
-      if (state.stress >= 3) return "red";
-      if (state.repetition >= 4 && state.variation <= 2) return "green";
-      return "gold";
-    }
+   function determineColor() {
+  const { loops, lines, scatter, anchors } = state.patternMemory;
+
+  if (
+    state.calm >= 4 &&
+    state.variation >= 5 &&
+    scatter >= 2 &&
+    anchors >= 1
+  ) return "purple";
+
+  if (
+    state.calm >= 2 &&
+    state.variation >= 3 &&
+    (lines >= 1 || scatter >= 1)
+  ) return "blue";
+
+  if (
+    state.repetition >= 4 ||
+    loops >= 2
+  ) return "green";
+
+  if (state.stress >= 3) return "red";
+
+  return "gold";
+}
 
     function stateLabel(color) {
       if (color === "purple") return "emergence";
