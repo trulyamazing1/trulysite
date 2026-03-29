@@ -519,18 +519,56 @@
     return "growth";
   }
 
-  function updateReading() {
-    if (state.currentColor === "purple") {
-      readingEl.textContent = "Something rare is forming. The yolk is holding a coherent pattern.";
-    } else if (state.currentColor === "blue") {
-      readingEl.textContent = "The field is attuning. Movement is shaping the yolk into a living response.";
-    } else if (state.currentColor === "green") {
-      readingEl.textContent = "The field is slipping toward repetition. Try breaking your pattern.";
-    } else if (state.currentColor === "red") {
-      readingEl.textContent = "Pressure is rising. Slow down and reorient.";
-    } else {
-      readingEl.textContent = "Growth is underway. The yolk is still gathering form.";
+function updateReading() {
+  const { loops, lines, scatter, anchors, returns } = state.patternMemory;
+
+  if (state.currentColor === "purple") {
+    if (scatter >= 1 && anchors >= 1) {
+      readingEl.textContent = "The field is holding both exploration and memory. Something coherent is forming.";
+      return;
     }
+
+    readingEl.textContent = "A rare pattern is stabilizing. The yolk is beginning to hold itself.";
+    return;
+  }
+
+  if (state.currentColor === "blue") {
+    if (lines >= 1) {
+      readingEl.textContent = "Movement is becoming directional. The yolk is learning intention.";
+      return;
+    }
+
+    if (scatter >= 1) {
+      readingEl.textContent = "The field is widening. The yolk is learning from variation.";
+      return;
+    }
+
+    readingEl.textContent = "The field is attuning. Something is beginning to take shape.";
+    return;
+  }
+
+  if (state.currentColor === "green") {
+    if (loops >= 1 || returns >= 1) {
+      readingEl.textContent = "You are circling familiar ground. The field remembers, but is not yet expanding.";
+      return;
+    }
+
+    readingEl.textContent = "The field is stabilizing. Repetition is taking hold.";
+    return;
+  }
+
+  if (state.currentColor === "red") {
+    readingEl.textContent = "Pressure is rising. The field is losing coherence.";
+    return;
+  }
+
+  if (anchors >= 1) {
+    readingEl.textContent = "Certain places are beginning to matter. The field is forming memory.";
+    return;
+  }
+
+  readingEl.textContent = "The field is quiet. Move to begin shaping the yolk.";
+}
   }
 
   function syncUI() {
