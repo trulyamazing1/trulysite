@@ -476,15 +476,15 @@
     return "red";
   }
 
-  if (
-    state.calm >= 4 &&
-    state.variation >= 4 &&
-    (scatter >= 1 || lines >= 1) &&
-    anchors >= 1
-  ) {
-    return "purple";
-  }
-
+ if (
+  state.calm >= 4 &&
+  state.variation >= 4 &&
+  (scatter >= 1 || lines >= 1) &&
+  anchors >= 2 &&
+  (returns >= 1 || loops >= 1)
+) {
+  return "purple";
+}
   if (
     state.repetition >= 3 ||
     loops >= 1 ||
