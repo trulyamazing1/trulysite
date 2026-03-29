@@ -532,9 +532,13 @@
   }
 
   function visitTile(nx, ny) {
-    const newKey = keyOf(nx, ny);
-    const lastKey = state.path[state.path.length - 1];
-    const recent = state.path.slice(-4);
+  function visitTile(nx, ny) {
+  const newKey = keyOf(nx, ny);
+  const lastKey = state.path[state.path.length - 1];
+  const recent = state.path.slice(-4);
+
+  state.x = nx;
+  state.y = ny;
 
     state.x = nx;
     state.y = ny;
