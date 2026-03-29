@@ -414,17 +414,86 @@
       logEl.textContent = msg + "\n" + logEl.textContent;
     }
 
-    function keyOf(x, y) {
-      function trackDirection(dx, dy) {
+function keyOf(x, y) {
+  return `${x},${y}`;
+}
+
+function trackDirection(dx, dy) {
   if (dx === 0 && dy === -1) state.patternMemory.directionBias.up += 1;
   if (dx === 0 && dy === 1) state.patternMemory.directionBias.down += 1;
   if (dx === -1 && dy === 0) state.patternMemory.directionBias.left += 1;
   if (dx === 1 && dy === 0) state.patternMemory.directionBias.right += 1;
 }
-      return `${x},${y}`;
-    }
 
-   function determineColor() {
+function analyzePatterns() {
+  const recent = state.path.slice(-6);
+
+  if (recent.length < 4) return;
+
+  const unique = new Set(recent);
+
+  if (unique.size >= 5) {
+    state.patternMemory.scatter += 1;
+  }
+
+  const latest = recent[recent.length - 1];
+  if (recent.slice(0, -1).includes(latest)) {
+    state.patternMemory.returns += 1;
+  }
+
+  if (
+    recent.length >= 5 &&
+    recent[0] === recent[4] &&
+    new Set(recent.slice(0, 4)).size >= 3
+  ) {
+    state.patternMemory.loops += 1;
+  }
+
+  const xVals = recent.map(p => Number(p.split(",")[0]));
+  const yVals = recent.map(p => Number(p.split(",")[1]));
+
+  const xSpread = Math.max(...xVals) - Math.min(...xVals);
+  const ySpread = Math.max(...yVals) - Math.min(...yVals);
+
+  if ((xSpread >= 3 && ySpread <= 1) || (ySpread >= 3 && xSpread <= 1)) {
+    state.patternMemory.lines += 1;
+  }
+
+  let anchorHits = 0;
+  for (const pos of recent) {
+    if (state.markers.has(pos)) anchorHits += 1;
+  }
+
+  if (anchorHits >= 2) {
+    state.patternMemory.anchors += 1;
+  }
+}
+
+function determineColor() {
+  const { loops, lines, scatter, anchors } = state.patternMemory;
+
+  if (
+    state.calm >= 4 &&
+    state.variation >= 5 &&
+    scatter >= 2 &&
+    anchors >= 1
+  ) return "purple";
+
+  if (
+    state.calm >= 2 &&
+    state.variation >= 3 &&
+    (lines >= 1 || scatter >= 1)
+  ) return "blue";
+
+  if (
+    state.repetition >= 4 ||
+    loops >= 2
+  ) return "green";
+
+  if (state.stress >= 3) return "red";
+
+  return "gold";
+}
   const { loops, lines, scatter, anchors } = state.patternMemory;
 
   if (
