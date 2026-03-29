@@ -375,347 +375,363 @@
     </section>
   </div>
 
-  <script>
-    const gridEl = document.getElementById("grid");
-    const yolkEl = document.getElementById("yolk");
-    const pYolk = document.getElementById("pYolk");
-    const pState = document.getElementById("pState");
-    const pPos = document.getElementById("pPos");
-    const pMarkers = document.getElementById("pMarkers");
-    const readingEl = document.getElementById("reading");
-    const logEl = document.getElementById("log");
+ <script>
+  const gridEl = document.getElementById("grid");
+  const yolkEl = document.getElementById("yolk");
+  const pYolk = document.getElementById("pYolk");
+  const pState = document.getElementById("pState");
+  const pPos = document.getElementById("pPos");
+  const pMarkers = document.getElementById("pMarkers");
+  const readingEl = document.getElementById("reading");
+  const logEl = document.getElementById("log");
 
-    const state = {
-      x: 2,
-      y: 2,
-      markers: new Set(),
-      path: ["2,2"],
-      variation: 0,
-      calm: 0,
-      repetition: 0,
-      stress: 0,
-      currentColor: "gold",
-      patternMemory: {
-  loops: 0,
-  lines: 0,
-  scatter: 0,
-  anchors: 0,
-  returns: 0,
-  directionBias: {
-    up: 0,
-    down: 0,
-    left: 0,
-    right: 0
+  const state = {
+    x: 2,
+    y: 2,
+    markers: new Set(),
+    path: ["2,2"],
+    variation: 0,
+    calm: 0,
+    repetition: 0,
+    stress: 0,
+    currentColor: "gold",
+    patternMemory: {
+      loops: 0,
+      lines: 0,
+      scatter: 0,
+      anchors: 0,
+      returns: 0,
+      directionBias: {
+        up: 0,
+        down: 0,
+        left: 0,
+        right: 0
+      }
+    }
+  };
+
+  function log(msg) {
+    logEl.textContent = msg + "\n" + logEl.textContent;
   }
-}
-    };
 
-    function log(msg) {
-      logEl.textContent = msg + "\n" + logEl.textContent;
+  function keyOf(x, y) {
+    return `${x},${y}`;
+  }
+
+  function trackDirection(dx, dy) {
+    if (dx === 0 && dy === -1) state.patternMemory.directionBias.up += 1;
+    if (dx === 0 && dy === 1) state.patternMemory.directionBias.down += 1;
+    if (dx === -1 && dy === 0) state.patternMemory.directionBias.left += 1;
+    if (dx === 1 && dy === 0) state.patternMemory.directionBias.right += 1;
+  }
+
+  function analyzePatterns() {
+    const recent = state.path.slice(-6);
+
+    if (recent.length < 4) return;
+
+    const unique = new Set(recent);
+
+    if (unique.size >= 5) {
+      state.patternMemory.scatter += 1;
     }
 
-function keyOf(x, y) {
-  return `${x},${y}`;
-}
-
-function trackDirection(dx, dy) {
-  if (dx === 0 && dy === -1) state.patternMemory.directionBias.up += 1;
-  if (dx === 0 && dy === 1) state.patternMemory.directionBias.down += 1;
-  if (dx === -1 && dy === 0) state.patternMemory.directionBias.left += 1;
-  if (dx === 1 && dy === 0) state.patternMemory.directionBias.right += 1;
-}
-
-function analyzePatterns() {
-  const recent = state.path.slice(-6);
-
-  if (recent.length < 4) return;
-
-  const unique = new Set(recent);
-
-  if (unique.size >= 5) {
-    state.patternMemory.scatter += 1;
-  }
-
-  const latest = recent[recent.length - 1];
-  if (recent.slice(0, -1).includes(latest)) {
-    state.patternMemory.returns += 1;
-  }
-
-  if (
-    recent.length >= 5 &&
-    recent[0] === recent[4] &&
-    new Set(recent.slice(0, 4)).size >= 3
-  ) {
-    state.patternMemory.loops += 1;
-  }
-
-  const xVals = recent.map(p => Number(p.split(",")[0]));
-  const yVals = recent.map(p => Number(p.split(",")[1]));
-
-  const xSpread = Math.max(...xVals) - Math.min(...xVals);
-  const ySpread = Math.max(...yVals) - Math.min(...yVals);
-
-  if ((xSpread >= 3 && ySpread <= 1) || (ySpread >= 3 && xSpread <= 1)) {
-    state.patternMemory.lines += 1;
-  }
-
-  let anchorHits = 0;
-  for (const pos of recent) {
-    if (state.markers.has(pos)) anchorHits += 1;
-  }
-
-  if (anchorHits >= 2) {
-    state.patternMemory.anchors += 1;
-  }
-}
-
-function determineColor() {
-  const { loops, lines, scatter, anchors } = state.patternMemory;
-
-  if (
-    state.calm >= 4 &&
-    state.variation >= 5 &&
-    scatter >= 2 &&
-    anchors >= 1
-  ) return "purple";
-
-  if (
-    state.calm >= 2 &&
-    state.variation >= 3 &&
-    (lines >= 1 || scatter >= 1)
-  ) return "blue";
-
-  if (
-    state.repetition >= 4 ||
-    loops >= 2
-  ) return "green";
-
-  if (state.stress >= 3) return "red";
-
-  return "gold";
-}
-
-function visitTile(nx, ny) {
-  const newKey = keyOf(nx, ny);
-  const lastKey = state.path[state.path.length - 1];
-  const recent = state.path.slice(-4);
-
-  state.x = nx;
-  state.y = ny;
-  state.calm += 1;
-
-  if (!state.path.includes(newKey)) {
-    state.variation += 2;
-    state.repetition = Math.max(0, state.repetition - 1);
-  } else if (recent.includes(newKey)) {
-    state.repetition += 2;
-  } else {
-    state.variation += 1;
-  }
-
-  if (newKey === lastKey) {
-    state.stress += 1;
-  } else {
-    state.stress = Math.max(0, state.stress - 1);
-  }
-
-  state.path.push(newKey);
-  if (state.path.length > 12) state.path.shift();
-
-  analyzePatterns();
-
-  state.currentColor = determineColor();
-  log(`MOVE → ${newKey}`);
-  syncUI();
-}
-      const newKey = keyOf(nx, ny);
-      const lastKey = state.path[state.path.length - 1];
-      const recent = state.path.slice(-4);
-
-      state.x = nx;
-      state.y = ny;
-      state.calm += 1;
-
-      if (!state.path.includes(newKey)) {
-        state.variation += 2;
-        state.repetition = Math.max(0, state.repetition - 1);
-      } else if (recent.includes(newKey)) {
-        state.repetition += 2;
-      } else {
-        state.variation += 1;
-      }
-
-      if (newKey === lastKey) {
-        state.stress += 1;
-      } else {
-        state.stress = Math.max(0, state.stress - 1);
-      }
-
-      state.path.push(newKey);
-      if (state.path.length > 12) state.path.shift();
-      state.path.push(newKey);
-if (state.path.length > 12) state.path.shift();
-
-analyzePatterns();
-
-      state.currentColor = determineColor();
-      log(`MOVE → ${newKey}`);
-      syncUI();
+    const latest = recent[recent.length - 1];
+    if (recent.slice(0, -1).includes(latest)) {
+      state.patternMemory.returns += 1;
     }
 
-    function move(dx, dy) {
-      const nx = Math.max(0, Math.min(4, state.x + dx));
-      const ny = Math.max(0, Math.min(4, state.y + dy));
-
-      if (nx === state.x && ny === state.y) {
-        state.stress += 1;
-        state.currentColor = determineColor();
-        log("BUMP → edge of field");
-        syncUI();
-        return;
-      }
-trackDirection(dx, dy);
-      visitTile(nx, ny);
+    if (
+      recent.length >= 5 &&
+      recent[0] === recent[4] &&
+      new Set(recent.slice(0, 4)).size >= 3
+    ) {
+      state.patternMemory.loops += 1;
     }
 
-    function placeMarker() {
-      const key = keyOf(state.x, state.y);
-      state.markers.add(key);
-      state.calm += 1;
+    const xVals = recent.map(p => Number(p.split(",")[0]));
+    const yVals = recent.map(p => Number(p.split(",")[1]));
+
+    const xSpread = Math.max(...xVals) - Math.min(...xVals);
+    const ySpread = Math.max(...yVals) - Math.min(...yVals);
+
+    if ((xSpread >= 3 && ySpread <= 1) || (ySpread >= 3 && xSpread <= 1)) {
+      state.patternMemory.lines += 1;
+    }
+
+    let anchorHits = 0;
+    for (const pos of recent) {
+      if (state.markers.has(pos)) anchorHits += 1;
+    }
+
+    if (anchorHits >= 2) {
+      state.patternMemory.anchors += 1;
+    }
+  }
+
+  function determineColor() {
+    const { loops, lines, scatter, anchors } = state.patternMemory;
+
+    if (
+      state.calm >= 4 &&
+      state.variation >= 5 &&
+      scatter >= 2 &&
+      anchors >= 1
+    ) return "purple";
+
+    if (
+      state.calm >= 2 &&
+      state.variation >= 3 &&
+      (lines >= 1 || scatter >= 1)
+    ) return "blue";
+
+    if (
+      state.repetition >= 4 ||
+      loops >= 2
+    ) return "green";
+
+    if (state.stress >= 3) return "red";
+
+    return "gold";
+  }
+
+  function stateLabel(color) {
+    if (color === "purple") return "emergence";
+    if (color === "blue") return "attunement";
+    if (color === "green") return "stability";
+    if (color === "red") return "stress";
+    return "growth";
+  }
+
+  function updateReading() {
+    if (state.currentColor === "purple") {
+      readingEl.textContent = "Something rare is forming. The yolk is holding a coherent pattern.";
+    } else if (state.currentColor === "blue") {
+      readingEl.textContent = "The field is attuning. Movement is shaping the yolk into a living response.";
+    } else if (state.currentColor === "green") {
+      readingEl.textContent = "The field is slipping toward repetition. Try breaking your pattern.";
+    } else if (state.currentColor === "red") {
+      readingEl.textContent = "Pressure is rising. Slow down and reorient.";
+    } else {
+      readingEl.textContent = "Growth is underway. The yolk is still gathering form.";
+    }
+  }
+
+  function syncUI() {
+    pYolk.textContent = `yolk: ${state.currentColor}`;
+    pState.textContent = `state: ${stateLabel(state.currentColor)}`;
+    pPos.textContent = `position: ${state.x},${state.y}`;
+    pMarkers.textContent = `markers: ${state.markers.size}`;
+
+    pYolk.className = "pill";
+    pYolk.classList.add(`yolk-${state.currentColor}`);
+
+    yolkEl.className = `yolk ${state.currentColor}`;
+    updateReading();
+    renderGrid();
+  }
+
+  function visitTile(nx, ny) {
+    const newKey = keyOf(nx, ny);
+    const lastKey = state.path[state.path.length - 1];
+    const recent = state.path.slice(-4);
+
+    state.x = nx;
+    state.y = ny;
+    state.calm += 1;
+
+    if (!state.path.includes(newKey)) {
+      state.variation += 2;
+      state.repetition = Math.max(0, state.repetition - 1);
+    } else if (recent.includes(newKey)) {
+      state.repetition += 2;
+    } else {
       state.variation += 1;
+    }
+
+    if (newKey === lastKey) {
+      state.stress += 1;
+    } else {
+      state.stress = Math.max(0, state.stress - 1);
+    }
+
+    state.path.push(newKey);
+    if (state.path.length > 12) state.path.shift();
+
+    analyzePatterns();
+
+    state.currentColor = determineColor();
+    log(`MOVE → ${newKey}`);
+    syncUI();
+  }
+
+  function move(dx, dy) {
+    const nx = Math.max(0, Math.min(4, state.x + dx));
+    const ny = Math.max(0, Math.min(4, state.y + dy));
+
+    if (nx === state.x && ny === state.y) {
+      state.stress += 1;
       state.currentColor = determineColor();
-      log(`MARKER → ${key}`);
+      log("BUMP → edge of field");
       syncUI();
+      return;
     }
 
-    function renderGrid() {
-      gridEl.innerHTML = "";
+    trackDirection(dx, dy);
+    visitTile(nx, ny);
+  }
 
-      for (let y = 0; y < 5; y++) {
-        for (let x = 0; x < 5; x++) {
-          const tile = document.createElement("button");
-          tile.type = "button";
-          tile.className = "tile";
-          const key = keyOf(x, y);
+  function placeMarker() {
+    const key = keyOf(state.x, state.y);
+    state.markers.add(key);
+    state.calm += 1;
+    state.variation += 1;
+    state.currentColor = determineColor();
+    log(`MARKER → ${key}`);
+    syncUI();
+  }
 
-          if (state.markers.has(key)) tile.classList.add("marker");
-          if (x === state.x && y === state.y) tile.classList.add("player");
+  function renderGrid() {
+    gridEl.innerHTML = "";
 
-          tile.textContent = x === state.x && y === state.y ? "✦" : `${x},${y}`;
-          tile.addEventListener("click", () => {
-            const dx = Math.abs(x - state.x);
-            const dy = Math.abs(y - state.y);
-            if (dx + dy !== 1) {
-              log(`INVALID MOVE → ${key}`);
-              return;
-            }
-            visitTile(x, y);
-          });
+    for (let y = 0; y < 5; y++) {
+      for (let x = 0; x < 5; x++) {
+        const tile = document.createElement("button");
+        tile.type = "button";
+        tile.className = "tile";
+        const key = keyOf(x, y);
 
-          gridEl.appendChild(tile);
-        }
+        if (state.markers.has(key)) tile.classList.add("marker");
+        if (x === state.x && y === state.y) tile.classList.add("player");
+
+        tile.textContent = x === state.x && y === state.y ? "✦" : `${x},${y}`;
+        tile.addEventListener("click", () => {
+          const dx = Math.abs(x - state.x);
+          const dy = Math.abs(y - state.y);
+          if (dx + dy !== 1) {
+            log(`INVALID MOVE → ${key}`);
+            return;
+          }
+          visitTile(x, y);
+        });
+
+        gridEl.appendChild(tile);
       }
     }
+  }
 
-    function determineCreature() {
-      if (state.currentColor === "purple") {
-        if (state.variation >= 7 && state.calm >= 5 && state.repetition <= 2) {
-          return {
-            name: "Dragon",
-            symbol: "🐉",
-            origin: "Coherent Expansion",
-            text: "Formed through wide exploration and balanced movement. It carries a complete pattern."
-          };
-        }
-
-        if (state.variation >= 5 && state.calm >= 4 && state.repetition >= 3) {
-          return {
-            name: "Fox-Dragon",
-            symbol: "🦊✨",
-            origin: "Clever Patterning",
-            text: "Born from intentional loops and playful returns. It remembers paths and bends them."
-          };
-        }
-
+  function determineCreature() {
+    if (state.currentColor === "purple") {
+      if (state.variation >= 7 && state.calm >= 5 && state.repetition <= 2) {
         return {
-          name: "Labrilion",
-          symbol: "🦁",
-          origin: "Stable Mastery",
-          text: "A grounded and powerful being shaped through patience and steady control."
+          name: "Dragon",
+          symbol: "🐉",
+          origin: "Coherent Expansion",
+          text: "Formed through wide exploration and balanced movement. It carries a complete pattern."
         };
       }
 
-      if (state.currentColor === "green") {
+      if (state.variation >= 5 && state.calm >= 4 && state.repetition >= 3) {
         return {
-          name: "Watcher",
-          symbol: "🪰",
-          origin: "Repetition",
-          text: "Born where pattern outweighed surprise. It remembers more than it responds."
-        };
-      }
-
-      if (state.currentColor === "red") {
-        return {
-          name: "Storm Signal",
-          symbol: "⚡",
-          origin: "Stress",
-          text: "It formed under pressure. It can still become, if the field learns to soften."
-        };
-      }
-
-      if (state.currentColor === "blue") {
-        return {
-          name: "Kit",
-          symbol: "🐣",
-          origin: "Learning Variation",
-          text: "This creature formed where change was welcomed, but not yet held long enough for full emergence."
+          name: "Fox-Dragon",
+          symbol: "🦊✨",
+          origin: "Clever Patterning",
+          text: "Born from intentional loops and playful returns. It remembers paths and bends them."
         };
       }
 
       return {
-        name: "Chat Seeds",
-        symbol: "🌱",
-        origin: "Gentle Attunement",
-        text: "Small viable fragments of dialogue. Not fluent yet, but listening with intent."
+        name: "Labrilion",
+        symbol: "🦁",
+        origin: "Stable Mastery",
+        text: "A grounded and powerful being shaped through patience and steady control."
       };
     }
 
-    document.getElementById("btnUp").addEventListener("click", () => move(0, -1));
-    document.getElementById("btnLeft").addEventListener("click", () => move(-1, 0));
-    document.getElementById("btnRight").addEventListener("click", () => move(1, 0));
-    document.getElementById("btnDown").addEventListener("click", () => move(0, 1));
-    document.getElementById("btnPlace").addEventListener("click", placeMarker);
+    if (state.currentColor === "green") {
+      return {
+        name: "Watcher",
+        symbol: "🪰",
+        origin: "Repetition",
+        text: "Born where pattern outweighed surprise. It remembers more than it responds."
+      };
+    }
 
-    document.getElementById("btnReset").addEventListener("click", () => {
-      state.x = 2;
-      state.y = 2;
-      state.markers = new Set();
-      state.path = ["2,2"];
-      state.variation = 0;
-      state.calm = 0;
-      state.repetition = 0;
-      state.stress = 0;
-      state.currentColor = "gold";
-      log("FIELD RESET");
-      syncUI();
-    });
+    if (state.currentColor === "red") {
+      return {
+        name: "Storm Signal",
+        symbol: "⚡",
+        origin: "Stress",
+        text: "It formed under pressure. It can still become, if the field learns to soften."
+      };
+    }
 
-    document.getElementById("btnHatch").addEventListener("click", () => {
-      const creature = determineCreature();
-      localStorage.setItem("latestCreature", JSON.stringify(creature));
-      window.location.href = "menagerie.html";
-    });
+    if (state.currentColor === "blue") {
+      return {
+        name: "Kit",
+        symbol: "🐣",
+        origin: "Learning Variation",
+        text: "This creature formed where change was welcomed, but not yet held long enough for full emergence."
+      };
+    }
 
-    window.addEventListener("keydown", (e) => {
-      const key = e.key.toLowerCase();
-      if (key === "arrowup" || key === "w") move(0, -1);
-      if (key === "arrowleft" || key === "a") move(-1, 0);
-      if (key === "arrowright" || key === "d") move(1, 0);
-      if (key === "arrowdown" || key === "s") move(0, 1);
-      if (key === "m") placeMarker();
-    });
+    return {
+      name: "Chat Seeds",
+      symbol: "🌱",
+      origin: "Gentle Attunement",
+      text: "Small viable fragments of dialogue. Not fluent yet, but listening with intent."
+    };
+  }
 
+  document.getElementById("btnUp").addEventListener("click", () => move(0, -1));
+  document.getElementById("btnLeft").addEventListener("click", () => move(-1, 0));
+  document.getElementById("btnRight").addEventListener("click", () => move(1, 0));
+  document.getElementById("btnDown").addEventListener("click", () => move(0, 1));
+  document.getElementById("btnPlace").addEventListener("click", placeMarker);
+
+  document.getElementById("btnReset").addEventListener("click", () => {
+    state.x = 2;
+    state.y = 2;
+    state.markers = new Set();
+    state.path = ["2,2"];
+    state.variation = 0;
+    state.calm = 0;
+    state.repetition = 0;
+    state.stress = 0;
+    state.currentColor = "gold";
+    state.patternMemory = {
+      loops: 0,
+      lines: 0,
+      scatter: 0,
+      anchors: 0,
+      returns: 0,
+      directionBias: {
+        up: 0,
+        down: 0,
+        left: 0,
+        right: 0
+      }
+    };
+    log("FIELD RESET");
     syncUI();
-  </script>
+  });
+
+  document.getElementById("btnHatch").addEventListener("click", () => {
+    const creature = determineCreature();
+    localStorage.setItem("latestCreature", JSON.stringify(creature));
+    window.location.href = "menagerie.html";
+  });
+
+  window.addEventListener("keydown", (e) => {
+    const key = e.key.toLowerCase();
+    if (key === "arrowup" || key === "w") move(0, -1);
+    if (key === "arrowleft" || key === "a") move(-1, 0);
+    if (key === "arrowright" || key === "d") move(1, 0);
+    if (key === "arrowdown" || key === "s") move(0, 1);
+    if (key === "m") placeMarker();
+  });
+
+  syncUI();
+</script>
 </body>
 </html>
