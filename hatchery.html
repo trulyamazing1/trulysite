@@ -562,12 +562,14 @@ function updateReading() {
     return;
   }
 
-  if (anchors >= 1) {
-    readingEl.textContent = "Certain places are beginning to matter. The field is forming memory.";
-    return;
-  }
+  if (anchors >= 2) {
+  readingEl.textContent = "Certain places now hold memory. The field is beginning to remember where meaning lives.";
+  return;
+}
 
-  readingEl.textContent = "The field is quiet. Move to begin shaping the yolk.";
+if (anchors >= 1) {
+  readingEl.textContent = "A place has started to matter. The field is no longer entirely neutral.";
+  return;
 }
   
 
