@@ -635,14 +635,20 @@ function updateReading() {
   }
 
   function placeMarker() {
-    const key = keyOf(state.x, state.y);
-    state.markers.add(key);
-    state.calm += 1;
-    state.variation += 1;
-    state.currentColor = determineColor();
-    log(`MARKER → ${key}`);
-    syncUI();
-  }
+  const key = keyOf(state.x, state.y);
+
+  state.markers.add(key);
+
+  state.calm += 1;
+  state.variation += 1;
+
+  // 🐉 NEW: mark this as meaningful space
+  state.patternMemory.anchors += 1;
+
+  state.currentColor = determineColor();
+  log(`MARKER → ${key}`);
+  syncUI();
+}
 
   function renderGrid() {
     gridEl.innerHTML = "";
