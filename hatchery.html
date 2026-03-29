@@ -494,6 +494,10 @@
 
       state.path.push(newKey);
       if (state.path.length > 12) state.path.shift();
+      state.path.push(newKey);
+if (state.path.length > 12) state.path.shift();
+
+analyzePatterns();
 
       state.currentColor = determineColor();
       log(`MOVE → ${newKey}`);
