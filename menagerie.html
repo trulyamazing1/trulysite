@@ -628,14 +628,19 @@ if (mouth) {
   const centerX = rect.left + rect.width / 2;
   const centerY = rect.top + rect.height / 2;
 
-  const dx = (e.clientX - centerX) / rect.width;
-  const dy = (e.clientY - centerY) / rect.height;
+  let dx = (e.clientX - centerX) / rect.width;
+  let dy = (e.clientY - centerY) / rect.height;
 
-  const moveX = dx * 6; // horizontal sensitivity
-  const moveY = dy * 6; // vertical sensitivity
+  dx = Math.max(-0.5, Math.min(0.5, dx));
+  dy = Math.max(-0.5, Math.min(0.5, dy));
+
+  const moveX = dx * 4;
+  const moveY = dy * 3;
 
   document.querySelectorAll('.eye').forEach(eye => {
-    eye.style.transform = `translate(${moveX}px, ${moveY}px) scale(var(--eye-scale))`;
+    const driftX = (Math.random() - 0.5) * 0.5;
+    const driftY = (Math.random() - 0.5) * 0.5;
+    eye.style.transform = `translate(${moveX + driftX}px, ${moveY + driftY}px) scale(var(--eye-scale))`;
   });
 }
     function reactToTouch() {
