@@ -136,6 +136,7 @@
       background:
         radial-gradient(circle at 35% 28%, rgba(255,255,255,0.16), transparent 22%),
         radial-gradient(circle at 50% 50%, rgba(255, 223, 124, 0.78), rgba(255, 180, 72, 0.92) 46%, rgba(130, 72, 20, 0.98) 100%);
+      transition: opacity 600ms ease;
       box-shadow:
         inset 0 0 30px rgba(255,255,255,0.14),
         inset 0 -24px 38px rgba(84, 35, 0, 0.45),
@@ -143,8 +144,11 @@
         0 0 120px rgba(255, 179, 71, calc(var(--glow-alpha) * 0.18));
       animation: eggBreath var(--pulse-duration) ease-in-out infinite;
       overflow: hidden;
+    
     }
-
+  .egg.cracked {
+  opacity: 0.25;
+}
 .egg::after {
   content: "";
   position: absolute;
@@ -577,6 +581,7 @@
 
     function triggerFirstCrack() {
       state.hasCracked = true;
+      el.egg.classList.add('cracked');
       document.documentElement.style.setProperty('--crack-opacity', '0.8');
       setStatus("Something inside presses outward.");
       addLog("The shell shifted", "Not a break. A beginning.");
