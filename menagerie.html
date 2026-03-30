@@ -246,10 +246,11 @@
 
 .frond {
   position: absolute;
-  width: 18px;
-  height: 34px;
-  opacity: 0.25;
+  width: 22px;
+  height: 42px;
+  opacity: 0.38;
   z-index: 3;
+  pointer-events: none;
 }
 
 .frond::before,
@@ -262,21 +263,20 @@
   border-radius: 70% 30% 70% 30%;
   background: linear-gradient(
     180deg,
-    rgba(255, 210, 120, 0.6),
-    rgba(255, 150, 110, 0.25)
+    rgba(255, 210, 120, 0.62),
+    rgba(255, 150, 110, 0.24)
   );
   transform-origin: bottom center;
 }
 
 .frond.left {
-  left: 10px;
-  top: -4px;
-  transform: rotate(-18deg) scale(1.2);
+  left: -8px;
+  top: 118px;
+  transform: rotate(-28deg) scale(1.05);
 }
-
 .frond.right {
   right: 10px;
-  top: -4px;
+  top: 10px;
   transform: rotate(18deg) scale(1.2);
 }
 
