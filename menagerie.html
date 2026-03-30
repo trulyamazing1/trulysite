@@ -242,7 +242,58 @@
   opacity: 0;
   transition: opacity 300ms ease;
 }
+.frond {
+  position: absolute;
+  width: 18px;
+  height: 34px;
+  opacity: 0.18;
+  transition: opacity 300ms ease, transform 300ms ease;
+  filter: blur(0.2px);
+}
 
+.frond::before,
+.frond::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 12px;
+  height: 20px;
+  border-radius: 70% 30% 70% 30%;
+  background: linear-gradient(180deg, rgba(255, 210, 120, 0.55), rgba(255, 150, 110, 0.28));
+  transform-origin: bottom center;
+}
+
+.frond.left {
+  left: 6px;
+  top: -2px;
+  transform: rotate(-18deg) scale(0.72);
+}
+
+.frond.right {
+  right: 6px;
+  top: -2px;
+  transform: rotate(18deg) scale(0.72);
+}
+
+.frond.left::before {
+  transform: translateX(-50%) rotate(-26deg);
+  top: 0;
+}
+
+.frond.left::after {
+  transform: translateX(-50%) rotate(-6deg);
+  top: 10px;
+}
+
+.frond.right::before {
+  transform: translateX(-50%) rotate(26deg);
+  top: 0;
+}
+
+.frond.right::after {
+  transform: translateX(-50%) rotate(6deg);
+  top: 10px;
+}
     .blink { position: absolute; width: 14px; height: 2px; background: rgba(86, 42, 10, 0.6); border-radius: 999px; opacity: 0; }
     .blink.left { left: 23px; top: 32px; }
     .blink.right { left: 68px; top: 32px; }
