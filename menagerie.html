@@ -643,6 +643,18 @@ if (mouth) {
     eye.style.transform = `translate(${moveX + driftX}px, ${moveY + driftY}px) scale(var(--eye-scale))`;
   });
 }
+  function blinkEyes() {
+  document.querySelectorAll('.eye').forEach(eye => {
+    eye.dataset.prevTransform = eye.style.transform || `scale(var(--eye-scale))`;
+    eye.style.transform = `scaleX(1.1) scaleY(0.12)`;
+  });
+
+  setTimeout(() => {
+    document.querySelectorAll('.eye').forEach(eye => {
+      eye.style.transform = eye.dataset.prevTransform || `scale(var(--eye-scale))`;
+    });
+  }, 140);
+}  
     function reactToTouch() {
       state.curiosity = clamp(state.curiosity + 0.02, 0, 1);
       state.coherence = clamp(state.coherence + 0.01, 0, 1);
