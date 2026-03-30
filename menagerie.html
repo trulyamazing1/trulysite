@@ -194,14 +194,18 @@
     }
 
     .face {
-      position: absolute;
-      left: 50%;
-      top: 49%;
-      transform: translate(-50%, -50%);
-      width: 112px;
-      height: 86px;
-      pointer-events: none;
-    }
+      position: relative;
+      .frond.left {
+  left: 10px;
+  top: 10px;
+  transform: rotate(-18deg) scale(1.2);
+}
+
+.frond.right {
+  right: 10px;
+  top: 10px;
+  transform: rotate(18deg) scale(1.2);
+}
 
     .eye {
       position: absolute;
@@ -246,9 +250,8 @@
   position: absolute;
   width: 18px;
   height: 34px;
-  opacity: 0.18;
-  transition: opacity 300ms ease, transform 300ms ease;
-  filter: blur(0.2px);
+  opacity: 1;
+  z-index: 3;
 }
 
 .frond::before,
@@ -259,7 +262,7 @@
   width: 12px;
   height: 20px;
   border-radius: 70% 30% 70% 30%;
-  background: linear-gradient(180deg, rgba(255, 210, 120, 0.55), rgba(255, 150, 110, 0.28));
+  background: red;
   transform-origin: bottom center;
 }
 
