@@ -193,48 +193,45 @@
       mix-blend-mode: screen;
     }
 
-    .face {
-      position: relative;
-      .frond.left {
-  left: 10px;
-  top: 10px;
-  transform: rotate(-18deg) scale(1.2);
+  .face {
+  position: absolute;
+  left: 50%;
+  top: 49%;
+  transform: translate(-50%, -50%);
+  width: 112px;
+  height: 86px;
+  pointer-events: none;
 }
 
-.frond.right {
-  right: 10px;
-  top: 10px;
-  transform: rotate(18deg) scale(1.2);
+.eye {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: rgba(28, 14, 5, 0.88);
+  border-radius: 50%;
+  opacity: var(--eye-opacity);
+  transform: scale(var(--eye-scale));
+  transition: transform 300ms ease, opacity 300ms ease, left 300ms ease, top 300ms ease;
 }
 
-    .eye {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background: rgba(28, 14, 5, 0.88);
-      border-radius: 50%;
-      opacity: var(--eye-opacity);
-      transform: scale(var(--eye-scale));
-      transition: transform 300ms ease, opacity 300ms ease, left 300ms ease, top 300ms ease;
-    }
+.eye.left { left: calc(26px + var(--pupil-offset-x)); top: calc(28px + var(--pupil-offset-y)); }
+.eye.right { left: calc(70px + var(--pupil-offset-x)); top: calc(28px + var(--pupil-offset-y)); }
 
-    .eye.left { left: calc(26px + var(--pupil-offset-x)); top: calc(28px + var(--pupil-offset-y)); }
-    .eye.right { left: calc(70px + var(--pupil-offset-x)); top: calc(28px + var(--pupil-offset-y)); }
+.cheek {
+  position: absolute;
+  width: 24px;
+  height: 14px;
+  background: var(--cheek);
+  border-radius: 50%;
+  filter: blur(2px);
+  opacity: calc(var(--cheek-opacity) + 0.22);
+  transition: opacity 350ms ease;
+}
 
-    .cheek {
-      position: absolute;
-      width: 24px;
-      height: 14px;
-      background: var(--cheek);
-      border-radius: 50%;
-      filter: blur(2px);
-      opacity: calc(var(--cheek-opacity) + 0.22);
-      transition: opacity 350ms ease;
-    }
+.cheek.left { left: 10px; top: 42px; }
+.cheek.right { right: 10px; top: 42px; }
 
-    .cheek.left { left: 10px; top: 42px; }
-    .cheek.right { right: 10px; top: 42px; }
-    .mouth {
+.mouth {
   position: absolute;
   left: 50%;
   top: 56px;
@@ -246,6 +243,7 @@
   opacity: 0;
   transition: opacity 300ms ease;
 }
+
 .frond {
   position: absolute;
   width: 18px;
@@ -267,15 +265,15 @@
 }
 
 .frond.left {
-  left: 6px;
-  top: -2px;
-  transform: rotate(-18deg) scale(0.72);
+  left: 10px;
+  top: 10px;
+  transform: rotate(-18deg) scale(1.2);
 }
 
 .frond.right {
-  right: 6px;
-  top: -2px;
-  transform: rotate(18deg) scale(0.72);
+  right: 10px;
+  top: 10px;
+  transform: rotate(18deg) scale(1.2);
 }
 
 .frond.left::before {
